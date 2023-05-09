@@ -1,0 +1,46 @@
+from unittest import TestCase
+
+import numpy as np
+from numpy import testing
+
+from src import lib
+
+
+class Test(TestCase):
+    def test_stream_shapes(self):
+        F = np.zeros(shape=(9, 3, 4))
+
+        lib.stream(F)
+
+        self.assertEqual(F.shape, (9, 3, 4))
+
+    def test_stream_moving(self):
+        F = init_channels()
+
+        lib.stream(F)
+
+        self.assertEqual(F[0][1][1], 1)  # channel 0 stays
+        self.assertEqual(F[1][2][1], 2)  # channel 1 right
+        self.assertEqual(F[2][1][2], 3)  # channel 2 down
+        self.assertEqual(F[3][0][1], 4)  # channel 3 left
+        self.assertEqual(F[4][1][0], 5)  # channel 4 up
+        self.assertEqual(F[5][2][2], 6)  # channel 5 bottom-right
+        self.assertEqual(F[6][0][2], 7)  # channel 6 bottom-left
+        self.assertEqual(F[7][0][0], 8)  # channel 7 top-left
+        self.assertEqual(F[8][2][0], 9)  # channel 8 top-right
+
+    def test_stream_circle(self):
+        F = init_channels(shape=(9, 3, 3))
+        copy = np.copy(F)
+
+        for i in range(3):
+            lib.stream(F)
+
+        testing.assert_array_equal(F, copy)
+
+
+def init_channels(shape=(9, 3, 4)) -> np.array:
+    F = np.zeros(shape=shape)
+    for i in range(9):
+        F[i][1][1] = i + 1
+    return F
