@@ -4,7 +4,7 @@ import numpy as np
 def density(F: np.array) -> np.array:
     """
     :param F: Probability Density Function of shape (c, x, y)
-    :return: Density Function
+    :return: Density Function ρ
     """
     return np.sum(F, axis=0)
 
@@ -30,7 +30,7 @@ assert np.sum(w) == 1, "weights for collision do not sum up to 1"
 def velocity(F: np.array) -> np.array:
     """
     :param F: Probability Density Function of shape (c, x, y)
-    :return: Velocity Function
+    :return: Velocity Function u
     """
     return np.einsum('ai, ixy->axy', c, F)
 
