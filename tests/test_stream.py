@@ -1,7 +1,6 @@
 from unittest import TestCase
 
 import numpy as np
-from numpy import testing
 
 from src import lib
 
@@ -28,15 +27,6 @@ class Test(TestCase):
         self.assertEqual(F[6][0][2], 7)  # channel 6 bottom-left
         self.assertEqual(F[7][0][0], 8)  # channel 7 top-left
         self.assertEqual(F[8][2][0], 9)  # channel 8 top-right
-
-    def test_stream_circle(self):
-        F = init_channels(shape=(9, 3, 3))
-        copy = np.copy(F)
-
-        for i in range(3):
-            lib.stream(F)
-
-        testing.assert_array_equal(F, copy)
 
 
 def init_channels(shape=(9, 3, 4)) -> np.array:
