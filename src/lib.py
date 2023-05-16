@@ -10,7 +10,10 @@ def density(F: np.array) -> np.array:
 
 
 # stream_shift_directions
-c = np.array([[0, 1, 0, -1, 0, 1, -1, -1, 1], [0, 0, 1, 0, -1, 1, 1, -1, -1]])
+c = np.array([
+    [0, 1, 0, -1, 0, 1, -1, -1, 1],
+    [0, 0, 1, 0, -1, 1, 1, -1, -1]
+])
 
 
 def stream(F: np.array) -> None:

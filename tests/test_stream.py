@@ -17,16 +17,18 @@ class Test(TestCase):
         F = init_channels()
 
         lib.stream(F)
-
+        
+        # in x-direction: higher number => further to the right
+        # in y-direction: higher number => further up
         self.assertEqual(F[0][1][1], 1)  # channel 0 stays
         self.assertEqual(F[1][2][1], 2)  # channel 1 right
-        self.assertEqual(F[2][1][2], 3)  # channel 2 down
+        self.assertEqual(F[2][1][2], 3)  # channel 2 up
         self.assertEqual(F[3][0][1], 4)  # channel 3 left
-        self.assertEqual(F[4][1][0], 5)  # channel 4 up
-        self.assertEqual(F[5][2][2], 6)  # channel 5 bottom-right
-        self.assertEqual(F[6][0][2], 7)  # channel 6 bottom-left
-        self.assertEqual(F[7][0][0], 8)  # channel 7 top-left
-        self.assertEqual(F[8][2][0], 9)  # channel 8 top-right
+        self.assertEqual(F[4][1][0], 5)  # channel 4 down
+        self.assertEqual(F[5][2][2], 6)  # channel 5 top-right
+        self.assertEqual(F[6][0][2], 7)  # channel 6 top-left
+        self.assertEqual(F[7][0][0], 8)  # channel 7 bottom-left
+        self.assertEqual(F[8][2][0], 9)  # channel 8 bottom-right
 
 
 def init_channels(shape=(9, 3, 4)) -> np.array:
