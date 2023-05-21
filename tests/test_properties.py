@@ -52,3 +52,18 @@ class TestDensity(TestCase):
             lib.stream(F)
 
         testing.assert_array_equal(F, copy)
+
+    def test_density_is_always_positive(self):
+        F = np.random.uniform(low=0, high=0.1, size=(9, 3, 4))
+        lower_bound = np.zeros_like(F)
+        testing.assert_array_less(lower_bound, F)
+
+        for i in range(3):
+            lib.stream(F)
+            lib.collision(F)
+            testing.assert_array_less(lower_bound, F)
+
+        density = np.random.uniform(low=0.01, high=0.2, size=(3, 4))
+        velocity = np.random.uniform(low=0.01, high=0.2, size=(2, 3, 4))
+        F = lib.equilibrium(density, velocity)
+        testing.assert_array_less(lower_bound, F)
