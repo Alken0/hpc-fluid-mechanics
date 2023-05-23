@@ -43,10 +43,9 @@ class Plotter:
         cbar.set_label("density", labelpad=+1)
         self._show()
 
-    def velocity(self, F: np.array, figure: Optional[int] = 2, step: Optional[int] = None, sidebar=False) -> None:
+    def velocity(self, F: np.array, figure: Optional[int] = 2, step: Optional[int] = None) -> None:
         """
         plots the velocity function of F
-        :param sidebar: if True: renders sidebar -> only do once!
         :param F: Probability Density Function of shape (c, x, y)
         :param step: shows step in title
         :param figure: which figure pyplot should use
@@ -55,12 +54,8 @@ class Plotter:
         plt.title(f'Velocity Function' if step is None else f'Velocity Function @{step}')
         plt.xlabel('X')
         plt.ylabel('Y')
-        data = lib.velocity(F)
-        data = np.sum(data, axis=0)
-        plt.imshow(data, cmap='magma')
-        if sidebar:
-            cbar = plt.colorbar()
-            cbar.set_label("velocity", labelpad=+1)
+        data = np.swapaxes(lib.velocity(F), 1, 2)
+        plt.quiver(data[0], data[1], angles='xy', scale_units='xy', scale=1)
         self._show()
 
 
@@ -88,5 +83,19 @@ def print_density(F: np.array):
         output = ""
         for y in range(density.shape[1]):
             output += f" {density[x][y]:.2f}" if y != 0 else f"{density[x][y]:.2f}"
+        print(output)
+    print()
+
+
+def print_velocity(F, axis: int) -> None:
+    """
+        prints the velocity of the probability density function (F) to the terminal
+        :param F: Probability Density Function of shape (c, x, y)
+        """
+    velocity = lib.velocity(F)
+    for x in range(velocity.shape[1]):
+        output = ""
+        for y in range(velocity.shape[2]):
+            output += f" {velocity[axis][x][y]:.2f}" if y != 0 else f"{velocity[axis][x][y]:.2f}"
         print(output)
     print()
