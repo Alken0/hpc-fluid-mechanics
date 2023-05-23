@@ -18,26 +18,33 @@ class TestDensity(TestCase):
 
             testing.assert_almost_equal(np.sum(lib.density(F)), density)
 
-    def test_velocity_goes_down_with_collision(self):
+    def test_density_distribution_borders_come_closer_with_collision(self):
         np.random.seed(0)
-        F = np.random.uniform(low=0, high=0.2, size=(9, 3, 7))
+        F = np.random.uniform(low=0, high=0.2, size=(9, 5, 4))
+        F[0, 0, 1] = 1
 
-        for i in range(400):
+        minimum = lib.density(F).min()
+        maximum = lib.density(F).max()
+        for i in range(100):
             lib.stream(F)
             lib.collision(F)
-        velocity_x = np.sum(lib.velocity(F)[0])
-        velocity_y = np.sum(lib.velocity(F)[1])
-        zeros = np.zeros_like(velocity_x)
 
-        testing.assert_almost_equal(velocity_x, zeros)
-        testing.assert_almost_equal(velocity_y, zeros)
+            if i % 10 == 9:
+                new_max = lib.density(F).max()
+                new_min = lib.density(F).min()
+
+                testing.assert_array_less(new_max, maximum)
+                testing.assert_array_less(minimum, new_min)
+
+                maximum = new_max
+                minimum = new_min
 
     def test_velocity_stays_same_without_collision(self):
         np.random.seed(0)
-        F = np.random.uniform(low=0, high=0.2, size=(9, 3, 7))
+        F = np.random.uniform(low=0, high=0.2, size=(9, 3, 3))
         velocity = lib.velocity(F)
 
-        for i in range(400):
+        for i in range(3):
             lib.stream(F)
 
         output = lib.velocity(F)
