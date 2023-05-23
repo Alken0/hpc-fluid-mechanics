@@ -32,10 +32,13 @@ assert np.sum(w) == 1, "weights for collision do not sum up to 1"
 
 def velocity(F: np.array) -> np.array:
     """
+    Determine the velocity by calculating:
+    .. math::
+        u = \\frac{1}{ρ} * \\sum_i [c_i F_i] .
     :param F: Probability Density Function of shape (c, x, y)
     :return: Velocity Function u
     """
-    return np.einsum('ai, ixy->axy', c, F)
+    return (1 / density(F)) * np.einsum('ai, ixy->axy', c, F)
 
 
 def collision(F: np.array, omega=1) -> None:
