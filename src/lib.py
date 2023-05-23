@@ -3,6 +3,9 @@ import numpy as np
 
 def density(F: np.array) -> np.array:
     """
+    Determine the velocity by calculating:
+    .. math::
+        ρ = \\sum_i F_i .
     :param F: Probability Density Function of shape (c, x, y)
     :return: Density Function ρ of shape (x, y)
     """
@@ -51,24 +54,24 @@ def collision(F: np.array, omega=1) -> None:
     """
     rho = density(F)
     u = velocity(F)
-    F_eq = equilibrium(density=rho, velocity=u)
+    F_eq = equilibrium(rho=rho, u=u)
     F += omega * (F_eq - F)
 
 
-def equilibrium(density: np.array, velocity: np.array) -> np.array:
+def equilibrium(rho: np.array, u: np.array) -> np.array:
     """
-    Determines the equilibrium function using the density (ρ) and velocity (u) by computing
+    Determines the equilibrium function using the density (ρ - rho) and velocity (u) by computing
     .. math::
         F_{eq}(ρ, u) = w * ρ * [1 + 3cu + 4.5(cu)² - 1.5 * u²]
     which can be rewritten as:\n
     .. math::
         F_{eq}(ρ, u) = w * ρ * [1 + 3cu * (1 + 0.5 * 3cu) - 1.5 * u²].
-    :param density: density function of shape (x, y)
-    :param velocity: velocity function of shape (2, x, y)
+    :param rho: density function of shape (x, y)
+    :param u: velocity function of shape (2, x, y)
     :return: Equilibrium of Probability Density Function (F_eq)
     """
-    cdot3u = 3 * np.einsum('ac,axy->cxy', c, velocity)
-    wdotrho = np.einsum('c,xy->cxy', w, density)
-    usq = np.einsum('axy,axy->xy', velocity, velocity)
+    cdot3u = 3 * np.einsum('ac,axy->cxy', c, u)
+    wdotrho = np.einsum('c,xy->cxy', w, rho)
+    usq = np.einsum('axy,axy->xy', u, u)
     feq = wdotrho * (1 + cdot3u * (1 + 0.5 * cdot3u) - 1.5 * usq)
     return feq
