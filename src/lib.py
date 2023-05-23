@@ -19,10 +19,10 @@ c = np.array([
 def stream(F: np.array) -> None:
     """
     modifies F itself
-    :param F: Probability Density Function of shape (c, x, y)
+    :param F: Probability Density Function of shape (c, x, y) with c = 9
     """
     for i in range(1, F.shape[0]):
-        F[i, :, :] = np.roll(F[i], shift=c[:, i], axis=(0, 1,))
+        F[i] = np.roll(F[i], shift=c[:, i], axis=(0, 1))
 
 
 # weights for collision
@@ -41,7 +41,7 @@ def velocity(F: np.array) -> np.array:
 def collision(F: np.array, omega=1) -> None:
     """
     Applies collision to F using
-    .. math:: F = F + omega * (F_{eq} - F).
+    .. math:: F = F + ω * (F_{eq} - F).
     F_eq is computed using the function `equilibrium` \n
     :param F: Probability Density Function of shape (c, x, y)
     :param omega: collision timescale
