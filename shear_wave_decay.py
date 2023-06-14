@@ -1,77 +1,71 @@
 from itertools import count
+from typing import Tuple
 
-import numpy as np
-from numpy import testing
-
-from src import lib, plot
+from src import lib, plot, save, swq
 
 
-def init_sinus_on_density(x_dim: int, y_dim: int, epsilon=0.01, L=1) -> np.array:
-    velocity = np.zeros(shape=(2, x_dim, y_dim))
-
-    # determine density
-    x = np.arange(1, x_dim + 1) / (x_dim + 1) * L
-    x = np.expand_dims(x, axis=1)
-    density = np.ones(shape=(x_dim, y_dim)) * 0.1
-    density = density + epsilon * np.sin(2 * np.pi * x / L)
-
-    return lib.equilibrium(density, velocity)
-
-
-def init_sinus_on_velocity(x_dim: int, y_dim: int, epsilon=0.1, L=1) -> np.array:
-    density = np.ones(shape=(x_dim, y_dim))
-
-    # determine velocity
-    y = np.arange(1, y_dim + 1) / (y_dim + 1) * L
-    velocity = np.zeros(shape=(2, x_dim, y_dim))
-    velocity[0] = velocity[0] + epsilon * np.sin(2 * np.pi * y / L)
-
-    return lib.equilibrium(density, velocity)
-
-
-def check_conditions_density(F: np.array, x_dim: int, y_dim: int):
-    testing.assert_equal(lib.velocity(F)[0], np.zeros(shape=(x_dim, y_dim)))
-    testing.assert_equal(lib.velocity(F)[1], np.zeros(shape=(x_dim, y_dim)))
-    testing.assert_array_less(lib.density(F), np.ones(shape=(x_dim, y_dim))), "density is too high"
-    testing.assert_array_less(np.zeros(shape=(x_dim, y_dim)), lib.density(F)), "density is less than 0?!"
-    assert F.shape[0] == 9, "incorrect number of channels"
-    assert np.sum(np.abs(lib.velocity(F))) < 0.1, "velocity is off"
-
-
-def check_conditions_velocity(F: np.array, x_dim: int, y_dim: int):
-    testing.assert_almost_equal(lib.velocity(F)[1], np.zeros(shape=(x_dim, y_dim))), "velocity in y-direction is off"
-    testing.assert_almost_equal(lib.density(F), np.ones(shape=(x_dim, y_dim))), "density is off"
-    testing.assert_array_less(np.zeros(shape=(x_dim, y_dim)), lib.density(F)), "density is less than 0?!"
-    assert F.shape[0] == 9, "incorrect number of channels"
-
-
-def main_density(x_dim: int = 100, y_dim: int = 100):
-    F = init_sinus_on_density(x_dim, y_dim)
-    check_conditions_density(F, x_dim, y_dim)
-
+def run_density(x_dim: int = 100, y_dim: int = 100):
+    F = swq.init_with_sinus_on_density(x_dim, y_dim)
     plotter = plot.Plotter(continuous=True)
+    saver = save.Saver()
+
     plotter.density(F, step=0)
     for t in count():
         lib.stream(F)
         lib.collision(F, omega=1)
+        saver.add_state(F)
+
         if t % 100 == 1:
             plotter.density(F, step=t)
+        if t % 1000 == 0:
+            saver.save("data/shear-wave-decay/density")
+            plot.velocity_over_time(saver.get_states())
 
 
-def main_velocity(x_dim: int = 3, y_dim: int = 20):
-    F = init_sinus_on_velocity(x_dim, y_dim)
-    check_conditions_velocity(F, x_dim, y_dim)
-
+def run_velocity(x_dim: int = 5, y_dim: int = 20, epsilon=0.5, omega=1.5, store=False, show=True):
+    F = swq.init_with_sinus_on_velocity(x_dim, y_dim, epsilon)
     plotter = plot.Plotter(continuous=True)
-    plotter.velocity(F, step=0)
+    saver = save.Saver(parameters=dict(
+        epsilon=epsilon,
+        omega=omega
+    ))
 
-    for t in count():
+    plotter.velocity(F, step=0)
+    for t in range(150):
         lib.stream(F)
-        lib.collision(F, omega=1)
-        if t % 10 == 1:
+        lib.collision(F, omega=omega)
+
+        if t % 10 == 1 and show:
             plotter.velocity(F, step=t)
+
+        saver.add_state(F)
+        if t % 10 == 1 and store:
+            saver.save("data/shear-wave-decay/velocity")
+
+    return saver
+
+
+def plot_shear_wave_decay_density():
+    saver = save.Saver()
+    saver.load("data/shear-wave-decay/density")
+    plot.density_over_time(saver.get_states())
+
+
+def plot_velocity_and_ideal_curve(saver: save.Saver, point: Tuple[int, int, int]):
+    L_z = saver.get_states()[0].shape[2]
+    a_0 = saver.parameters["epsilon"]
+    omega = saver.parameters["omega"]
+    z = point[2]
+
+    ideals = [lib.scaled_analytic_solution(a_0, t, z, L_z, omega) for t in range(saver.get_num_states())]
+    velocities = [lib.velocity(s)[point] for s in saver.get_states()]
+
+    plot.velocity_over_time(velocities, ideals, point)
 
 
 if __name__ == '__main__':
-    # main_density()
-    main_velocity()
+    point = (0, 0, 8)
+
+    for omega in [0.25, 0.5, 0.75, 1, 1.5, 1.75]:
+        saver = run_velocity(omega=omega, store=False, show=False)
+        plot_velocity_and_ideal_curve(saver, point)

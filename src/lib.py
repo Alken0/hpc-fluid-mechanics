@@ -3,9 +3,11 @@ import numpy as np
 
 def density(F: np.array) -> np.array:
     """
-    Determine the velocity by calculating:
+    Determine the density by calculating:
+
     .. math::
-        ρ = \\sum_i F_i .
+        ρ = \\sum_i F_i.
+
     :param F: Probability Density Function of shape (c, x, y)
     :return: Density Function ρ of shape (x, y)
     """
@@ -22,6 +24,7 @@ c = np.array([
 def stream(F: np.array) -> None:
     """
     modifies F itself
+
     :param F: Probability Density Function of shape (c, x, y) with c = 9
     """
     for i in range(1, F.shape[0]):
@@ -36,21 +39,25 @@ assert np.sum(w) == 1, "weights for collision do not sum up to 1"
 def velocity(F: np.array) -> np.array:
     """
     Determine the velocity by calculating:
+
     .. math::
-        u = \\frac{1}{ρ} * \\sum_i [c_i F_i] .
+        u = \\frac{1}{ρ} * \\sum_i [c_i F_i].
+
     :param F: Probability Density Function of shape (c, x, y)
-    :return: Velocity Function u
+    :return: Velocity Function u of shape (2, x, y)
     """
     return (1 / density(F)) * np.einsum('ai, ixy->axy', c, F)
 
 
 def collision(F: np.array, omega=1) -> None:
     """
-    Applies collision to F using
-    .. math:: F = F + ω * (F_{eq} - F).
-    F_eq is computed using the function `equilibrium` \n
+    Applies collision to F using, where :math:`F_eq` is computed by the function `equilibrium`:
+
+    .. math::
+        F = F + ω * (F_{eq} - F).
+
     :param F: Probability Density Function of shape (c, x, y)
-    :param omega: collision timescale
+    :param omega: relaxation frequency (delta-t / tau)
     """
     rho = density(F)
     u = velocity(F)
@@ -61,11 +68,15 @@ def collision(F: np.array, omega=1) -> None:
 def equilibrium(rho: np.array, u: np.array) -> np.array:
     """
     Determines the equilibrium function using the density (ρ - rho) and velocity (u) by computing
+
     .. math::
         F_{eq}(ρ, u) = w * ρ * [1 + 3cu + 4.5(cu)² - 1.5 * u²]
-    which can be rewritten as:\n
+
+    which can be rewritten as:
+
     .. math::
         F_{eq}(ρ, u) = w * ρ * [1 + 3cu * (1 + 0.5 * 3cu) - 1.5 * u²].
+
     :param rho: density function of shape (x, y)
     :param u: velocity function of shape (2, x, y)
     :return: Equilibrium of Probability Density Function (F_eq)
@@ -75,3 +86,72 @@ def equilibrium(rho: np.array, u: np.array) -> np.array:
     usq = np.einsum('axy,axy->xy', u, u)
     feq = wdotrho * (1 + cdot3u * (1 + 0.5 * cdot3u) - 1.5 * usq)
     return feq
+
+
+def viscosity(omega=1) -> float:
+    """
+    Determines the viscosity for a given omega using the following calculation where :math:`C_s` is the speed of sound.
+
+    .. math::
+        ν = C^2_S * (\\Delta t / \\omega - \\Delta t / 2)
+
+    This term can be simplified when using the Lattice Boltzmann Units :math:`\\Delta t = 1`, :math:`\\Delta x = 1`
+    and :math:`\\rho = 1` and the scheme D2Q9. Then the speed of sound can be set to :math:`C_s = 1/ \\sqrt 3`,
+    which allows to simplify the formula of the viscosity from before to
+
+    .. math::
+        ν = 1/3 (1/omega - 1/2).
+
+    :param omega: relaxation frequency (delta-t / tau)
+    :return: viscosity (ν) for omega
+    """
+    return 1 / 3 * (1 / omega - 1 / 2)
+
+
+def scaled_analytic_solution(a0, t, z, L_z, omega=1) -> float:
+    """"
+    To always get the exact solution for the given problem it's possible to use a scaling factor
+
+    .. math::
+        s = \\sin(2 \\pi / L_z) * z \n
+        out = a_t * s.
+
+    :param a0: amplitude at time t=0
+    :param t: timestep
+    :param z: position of point
+    :param L_z: Length of domain in direction z - use len(x) - 1!
+    :param omega: relaxation frequency (delta-t / tau)
+    :return: analytical time evolution perturbation amplitude at timestep t
+    """
+
+    solution = analytic_solution(a0, t, L_z, omega)
+    scaling = np.sin(2 * np.pi * z / L_z)
+
+    return solution * scaling
+
+
+def analytic_solution(a0, t, L_z, omega=1) -> float:
+    """
+    calculates the analytical time evolution perturbation amplitude at timestep t using
+
+    .. math::
+        exponent = -v * t * (2 \\pi / L_z)^2 \n
+        a_t = a_0 * e^{exponent}.
+
+    To always get the exact solution for the given problem it's possible to use a scaling factor
+
+    .. math::
+        s = \\sin(2 \\pi / L_z) * z \n
+        out = a_t * s.
+
+    :param a0: amplitude at time t=0
+    :param t: timestep
+    :param L_z: Length of domain in direction z - use len(x) - 1!
+    :param omega: relaxation frequency (delta-t / tau)
+    :return: analytical time evolution perturbation amplitude at timestep t
+    """
+
+    exponent = -viscosity(omega) * t * (2 * np.pi / L_z) ** 2
+    solution = a0 * np.e ** exponent
+
+    return solution

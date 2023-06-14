@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Tuple
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -85,6 +85,57 @@ def print_density(F: np.array):
             output += f" {density[x][y]:.2f}" if y != 0 else f"{density[x][y]:.2f}"
         print(output)
     print()
+
+
+def density_over_time(states: list[np.array]):
+    plt.figure(1)
+    plt.title(f'density over time')
+    plt.xlabel('Time')
+    plt.ylabel('Density')
+
+    densities = [lib.density(s) for s in states]
+    iterations = range(len(densities))
+
+    max_densities = [d.max() for d in densities]
+    min_densities = [d.min() for d in densities]
+    avg_densities = [np.average(d) for d in densities]
+
+    plt.plot(iterations, max_densities, label="max")
+    plt.plot(iterations, avg_densities, label="avg")
+    plt.plot(iterations, min_densities, label="min")
+
+    plt.legend()
+    plt.show()
+
+
+def density_over_time_at_zero_zero(states: list[np.array]):
+    plt.figure(1)
+    plt.title(f'density over time at position 0 0')
+    plt.xlabel('Time')
+    plt.ylabel('Density')
+
+    densities = [lib.density(s)[0][0] for s in states]
+    iterations = range(len(densities))
+
+    plt.plot(iterations, densities, label="@position 0, 0")
+
+    plt.legend()
+    plt.show()
+
+
+def velocity_over_time(velocities: list[float], ideals: list[float], point: Tuple[int, int, int]):
+    plt.figure(1132)
+    plt.title(f'velocity over time at position {point}')
+    plt.xlabel('Time')
+    plt.ylabel('Velocity')
+
+    iterations = range(len(velocities))
+    plt.plot(iterations, velocities, label="measured")
+    plt.plot(iterations, np.array(ideals), label="ideal")
+
+    plt.legend()
+    plt.ioff()
+    plt.show()
 
 
 def print_velocity(F, axis: int) -> None:
