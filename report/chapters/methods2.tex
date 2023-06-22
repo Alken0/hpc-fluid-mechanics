@@ -32,7 +32,7 @@ The whole Boltzmann Transport Equation is denoted as
 
 The l.h.s.\ of the equation denotes the streaming part that was just explained and the r.h.s.\ the collision, explained in the following part.
 
-\subsection{Collision}
+\subsection{Collision}\label{subsec:collision}
 Only applying streaming resembles a probability of collision of 0\%, which is not realistic.
 To account for collisions, an additional term is introduced into the equation to represent the collision process that occurs at each time step.
 In reality, collisions between particles result in an almost instantaneous exchange of energy and momentum.
@@ -88,6 +88,21 @@ The other two quantities can be calculated using the following formulas.
 
 \section{Lattice Bolzmann Scheme}
 
+In order to discretize the Boltzmann Transport Equation (BTE), it is necessary to incorporate both velocity and position space into the discrete scheme representation.
+An effective approach involves utilizing a 2D grid, as illustrated in \cref{fig:bte-scheme}.
+The grid represents the position space as coordinates of the x and y coordinates.
+\newline
+
+Each position holds a probability density value, resembled by the value at that point.
+The velocities are included when introducing a third dimension, that separates the different streaming directions.
+To get the probability density function back, only the sum of all different directions in one point is needed.
+The probability density function can be reconstructed by simply summing the values for all different directions at a given point.
+\newline
+
+The streaming, as explained in \cref{subsec:streaming}, is applied by moving the values of the points in one of 9 directions in their respective dimension.
+The collision process can be implemented by employing the functions described in \cref{subsec:collision}.
+During collisions, densities may be transferred between different dimensions within the scheme.
+
 \begin{figure}[h!]
     \begin{center}
         \includegraphics[width=10cm]{logos/Gitter_LBM.png}
@@ -96,6 +111,6 @@ The other two quantities can be calculated using the following formulas.
             (a) directions with given labels \\
             (b) streaming example of one particle
         }
-        \label{fig:bte}
+        \label{fig:bte-scheme}
     \end{center}
 \end{figure}
