@@ -2,22 +2,22 @@ from unittest import TestCase
 
 import numpy as np
 
-from src import lib
+from src.shared import boltzmann
 
 
 class Test(TestCase):
     def test_stream_shapes(self):
         F = np.zeros(shape=(9, 3, 4))
 
-        lib.stream(F)
+        boltzmann.stream(F)
 
         self.assertEqual(F.shape, (9, 3, 4))
 
     def test_stream_moving(self):
         F = init_channels()
 
-        lib.stream(F)
-        
+        boltzmann.stream(F)
+
         # in x-direction: higher number => further to the right
         # in y-direction: higher number => further up
         self.assertEqual(F[0][1][1], 1)  # channel 0 stays

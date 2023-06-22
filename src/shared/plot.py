@@ -3,7 +3,7 @@ from typing import Optional, Tuple
 import matplotlib.pyplot as plt
 import numpy as np
 
-from src import lib
+from src.shared import boltzmann
 
 
 class Plotter:
@@ -37,7 +37,7 @@ class Plotter:
         plt.title(f'Density Function' if step is None else f'Density Function @{step}')
         plt.xlabel('X')
         plt.ylabel('Y')
-        data = np.swapaxes(lib.density(F), 0, 1)
+        data = np.swapaxes(boltzmann.density(F), 0, 1)
         plt.imshow(data, cmap='magma', vmin=self._vmin, vmax=self._vmax)
         cbar = plt.colorbar()
         cbar.set_label("density", labelpad=+1)
@@ -54,7 +54,7 @@ class Plotter:
         plt.title(f'Velocity Function' if step is None else f'Velocity Function @{step}')
         plt.xlabel('X')
         plt.ylabel('Y')
-        data = np.swapaxes(lib.velocity(F), 1, 2)
+        data = np.swapaxes(boltzmann.velocity(F), 1, 2)
         plt.quiver(data[0], data[1], angles='xy', scale_units='xy', scale=1)
         self._show()
 
@@ -78,7 +78,7 @@ def print_density(F: np.array):
     prints the density of the probability density function (F) to the terminal
     :param F: Probability Density Function of shape (c, x, y)
     """
-    density = lib.density(F)
+    density = boltzmann.density(F)
     for x in range(density.shape[0]):
         output = ""
         for y in range(density.shape[1]):
@@ -93,7 +93,7 @@ def density_over_time(states: list[np.array]):
     plt.xlabel('Time')
     plt.ylabel('Density')
 
-    densities = [lib.density(s) for s in states]
+    densities = [boltzmann.density(s) for s in states]
     iterations = range(len(densities))
 
     max_densities = [d.max() for d in densities]
@@ -114,7 +114,7 @@ def density_over_time_at_zero_zero(states: list[np.array]):
     plt.xlabel('Time')
     plt.ylabel('Density')
 
-    densities = [lib.density(s)[0][0] for s in states]
+    densities = [boltzmann.density(s)[0][0] for s in states]
     iterations = range(len(densities))
 
     plt.plot(iterations, densities, label="@position 0, 0")
@@ -143,7 +143,7 @@ def print_velocity(F, axis: int) -> None:
         prints the velocity of the probability density function (F) to the terminal
         :param F: Probability Density Function of shape (c, x, y)
         """
-    velocity = lib.velocity(F)
+    velocity = boltzmann.velocity(F)
     for x in range(velocity.shape[1]):
         output = ""
         for y in range(velocity.shape[2]):
