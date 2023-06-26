@@ -1,27 +1,21 @@
-from itertools import count
-
 import numpy as np
 from numpy import testing
+from tqdm import tqdm
 
-from src.shared import boltzmann, plot, save, swq
+from src.shared import boltzmann, plot
+from src.shared.params import Parameters
+from src.shared.states import States
 
 
-def run_density(x_dim: int = 100, y_dim: int = 100):
-    F = swq.init_with_sinus_on_density(x_dim, y_dim)
-    plotter = plot.Plotter(continuous=True)
-    saver = save.Saver()
-
-    plotter.density(F, step=0)
-    for t in count():
+def run_density(params: Parameters) -> States:
+    F = init_with_sinus_on_density(params.x_dim, params.y_dim)
+    states = States()
+    for t in tqdm(range(params.iterations)):
         boltzmann.stream(F)
         boltzmann.collision(F, omega=1)
-        saver.add_state(F)
-
-        if t % 100 == 1:
-            plotter.density(F, step=t)
-        if t % 1000 == 0:
-            saver.save("data/shear-wave-decay/density")
-            plot.velocity_over_time(saver.get_states())
+        states.add_state(F)
+    states.save(params.path)
+    return states
 
 
 def init_with_sinus_on_density(x_dim: int, y_dim: int, epsilon=0.01, L=1) -> np.array:
@@ -48,4 +42,10 @@ def _check_conditions_density(F: np.array, x_dim: int, y_dim: int):
 
 
 if __name__ == '__main__':
-    run_density()
+    params = Parameters(path_="data/shear-wave-decay/density", iterations=1000)
+    states = run_density(params)
+    plot.max_density_over_time(states.get_states())
+    plot.max_velocity_over_time(states.get_states())
+    plot.velocity_field(states.get_states(), step=41, scale=0.06)
+    plot.velocity_field(states.get_states(), step=85, scale=0.06)
+    plot.velocity_field(states.get_states(), step=127, scale=0.06)

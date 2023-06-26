@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from src.shared import boltzmann
+from src.shared.states import States
 
 
 class Plotter:
@@ -87,9 +88,9 @@ def print_density(F: np.array):
     print()
 
 
-def density_over_time(states: list[np.array]):
-    plt.figure(1)
-    plt.title(f'density over time')
+def max_density_over_time(states: list[np.array]):
+    plt.figure()
+    plt.title(f'max-density over time')
     plt.xlabel('Time')
     plt.ylabel('Density')
 
@@ -108,13 +109,65 @@ def density_over_time(states: list[np.array]):
     plt.show()
 
 
-def density_over_time_at_zero_zero(states: list[np.array]):
+def max_velocity_over_time(states: list[np.array]):
+    plt.figure(1)
+    plt.title(f'max-velocity over time')
+    plt.xlabel('Time')
+    plt.ylabel('Density')
+
+    velocities = [boltzmann.velocity(s) for s in states]
+    iterations = range(len(velocities))
+
+    max_densities = [d.max() for d in velocities]
+    min_densities = [d.min() for d in velocities]
+    avg_densities = [np.average(d) for d in velocities]
+
+    plt.plot(iterations, max_densities, label="max")
+    plt.plot(iterations, avg_densities, label="avg")
+    plt.plot(iterations, min_densities, label="min")
+
+    plt.legend()
+    plt.show()
+
+
+def velocity_over_time_at(states: list[np.array], point=(0, 0)):
+    plt.figure(1)
+    plt.title(f'velocity over time at position {point}')
+    plt.xlabel('Time')
+    plt.ylabel('Density')
+
+    densities = [boltzmann.velocity(s)[0][point] for s in states]
+    iterations = range(len(densities))
+
+    plt.plot(iterations, densities, label=f"velocity")
+
+    plt.legend()
+    plt.show()
+
+
+def velocity_field(states: [np.array], step: int, scale: float = 0.06):
+    """
+    plots the velocity function of F
+    :param F: Probability Density Function of shape (c, x, y)
+    :param step: shows step in title
+    :param figure: which figure pyplot should use
+    """
+    plt.figure()
+    plt.title(f'Velocity Function @{step}')
+    plt.xlabel('X')
+    plt.ylabel('Y')
+    data = np.swapaxes(boltzmann.velocity(states[step]), 1, 2)
+    plt.quiver(data[0], data[1], angles='xy', scale_units='xy', scale=scale)
+    plt.show()
+
+
+def density_over_time_at(states: list[np.array], point=(0, 0)):
     plt.figure(1)
     plt.title(f'density over time at position 0 0')
     plt.xlabel('Time')
     plt.ylabel('Density')
 
-    densities = [boltzmann.density(s)[0][0] for s in states]
+    densities = [boltzmann.density(s)[point] for s in states]
     iterations = range(len(densities))
 
     plt.plot(iterations, densities, label="@position 0, 0")
@@ -150,3 +203,7 @@ def print_velocity(F, axis: int) -> None:
             output += f" {velocity[axis][x][y]:.2f}" if y != 0 else f"{velocity[axis][x][y]:.2f}"
         print(output)
     print()
+
+
+def save_density(state: States):
+    pass
