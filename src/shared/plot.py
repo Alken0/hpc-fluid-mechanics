@@ -27,14 +27,13 @@ class Plotter:
         else:
             plt.show()
 
-    def density(self, F: np.array, step: Optional[int] = None, figure=1) -> None:
+    def density(self, F: np.array, step: Optional[int] = None) -> None:
         """
         plots the density function of F
         :param F: Probability Density Function of shape (c, x, y)
         :param step: shows step in title
-        :param figure: which figure pyplot should use
         """
-        plt.figure(figure)
+        plt.figure(1)
         plt.title(f'Density Function' if step is None else f'Density Function @{step}')
         plt.xlabel('X')
         plt.ylabel('Y')
@@ -44,14 +43,13 @@ class Plotter:
         cbar.set_label("density", labelpad=+1)
         self._show()
 
-    def velocity(self, F: np.array, figure: Optional[int] = 2, step: Optional[int] = None) -> None:
+    def velocity(self, F: np.array, step: Optional[int] = None) -> None:
         """
         plots the velocity function of F
         :param F: Probability Density Function of shape (c, x, y)
         :param step: shows step in title
-        :param figure: which figure pyplot should use
         """
-        plt.figure(figure)
+        plt.figure(1)
         plt.title(f'Velocity Function' if step is None else f'Velocity Function @{step}')
         plt.xlabel('X')
         plt.ylabel('Y')
@@ -184,6 +182,17 @@ def velocity_field(states: States, step: int, scale: float = 0.06):
     plt.ylabel('Y')
     data = np.swapaxes(boltzmann.velocity(states[step]), 1, 2)
     plt.quiver(data[0], data[1], angles='xy', scale_units='xy', scale=scale)
+    plt.show()
+
+
+def velocity_field_with_boundaries_top_bottom(states: States, step: int, scale: float = 1.0):
+    plt.figure()
+    plt.title(f'Velocity Field @{step}')
+    plt.xlabel('X')
+    plt.ylabel('Y')
+    data = np.swapaxes(boltzmann.velocity(states[step][:, :, 1:states[step].shape[2] - 2]), 1,
+                       2)
+    plt.quiver(data[0,], data[1], angles='xy', scale_units='xy', scale=scale)
     plt.show()
 
 

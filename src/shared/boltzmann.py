@@ -186,7 +186,7 @@ def boundary(F: np.array, top=False, bottom=False, left=False, right=False, all=
         F[6, :, len_y] = 0
         # redirect top to bottom
         F[4, :, len_y] = F[2, :, len_y]
-        F[4, :, len_y] = 0
+        F[2, :, len_y] = 0
     if bottom:
         # redirect bottom-right to top-right
         F[5, :, 0] = F[8, :, 0]
@@ -218,3 +218,19 @@ def boundary(F: np.array, top=False, bottom=False, left=False, right=False, all=
         # redirect right to left
         F[3, len_x, :] = F[1, len_x, :]
         F[1, len_x] = 0
+
+
+def moving_wall(F: np.array, rho: float, u: np.array):
+    len_y = F.shape[2] - 1
+
+    def calc_moving(i, i_opposite):
+        second_part = 2 * w[i] * rho * (np.einsum('c,cy -> y', c[:, i], u) / (1 / 3))
+        F[i_opposite, :, len_y] = F[i, :, len_y] - second_part
+        F[i, :, len_y] = 0
+
+    # redirect top-right to bottom-right
+    calc_moving(5, 8)
+    # redirect top-left to bottom-left
+    calc_moving(6, 7)
+    # redirect top to bottom
+    calc_moving(2, 4)

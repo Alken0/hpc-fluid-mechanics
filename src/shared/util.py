@@ -62,13 +62,13 @@ class Saver:
             f.write(str(params))
 
     @staticmethod
-    def load(path: str) -> Tuple[States, Parameters]:
+    def load(path: str) -> States:
         state_np = np.load(f"{path}/states.npy")
         states = States()
         for i in range(state_np.shape[0]):
             states.add(state_np[i])
 
-        with open(f"{path}/params.txt", 'r') as f:
-            params: Parameters = eval(f.read())
+        # with open(f"{path}/params.txt", 'r') as f:
+        #    params: Parameters = eval(f.read())
 
-        return states, params
+        return states
