@@ -27,11 +27,9 @@ def init_with_sinus_on_velocity(x_dim: int, y_dim: int, epsilon=0.5) -> np.array
 
     # determine velocity
     y = np.arange(0, y_dim)
-    print(y)
     velocity = np.zeros(shape=(2, x_dim, y_dim))
     velocity[0] = velocity[0] + epsilon * np.sin(2 * np.pi * y / y_dim)
 
-    print(f"velocity: {velocity[0, 2, 4]}")
     F = boltzmann.equilibrium(density, velocity)
     _check_conditions_velocity(F, x_dim, y_dim)
     return F
@@ -71,8 +69,15 @@ def ideal_curve(states: States, params: Parameters) -> List[float]:
 
 if __name__ == '__main__':
     point = Point(0, 10, 10)
-    params = Parameters(path_="data/shear-wave-decay/velocity")
+    params = Parameters(path_="data/shear-wave-decay/velocity", iterations=1000)
     states = run_velocity(params)
 
+    scale = states.get_states()[0].max()
+    print(f"using scale: {scale}")
+    plot.velocity_field(states, step=0, scale=scale)
+    plot.velocity_field(states, step=500, scale=scale)
+    plot.velocity_field(states, step=999, scale=scale)
+
     plot.velocity_against_ideal_over_time(states, params, point)
-    plot.velocity_over_time_at(states, point)
+    plot.velocity_aggregate_over_time(states)
+    plot.density_aggregate_over_time(states)
