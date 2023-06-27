@@ -1,30 +1,25 @@
+from typing import Tuple, List
+
 import numpy as np
 from numpy import testing
+from tqdm import tqdm
 
-from src.shared import boltzmann, plot, save
+from src.shared import boltzmann, plot
+from src.shared.util import Parameters, Point, States, Saver
 
 
-def run_velocity(x_dim: int = 5, y_dim: int = 20, epsilon=0.5, omega=1.5, store=False, show=True):
-    F = init_with_sinus_on_velocity(x_dim, y_dim, epsilon)
-    plotter = plot.Plotter(continuous=True)
-    saver = save.Saver(parameters=dict(
-        epsilon=epsilon,
-        omega=omega
-    ))
+def run_velocity(params: Parameters) -> States:
+    F = init_with_sinus_on_velocity(params.x_dim, params.y_dim, params.epsilon)
+    states = States()
 
-    plotter.velocity(F, step=0)
-    for t in range(150):
+    for t in tqdm(range(params.iterations)):
         boltzmann.stream(F)
-        boltzmann.collision(F, omega=omega)
+        boltzmann.collision(F, omega=params.omega)
+        states.add_state(F)
 
-        if t % 10 == 1 and show:
-            plotter.velocity(F, step=t)
+    Saver.save(params.path, states, params)
 
-        saver.add_state(F)
-        if t % 10 == 1 and store:
-            saver.save("data/shear-wave-decay/velocity")
-
-    return saver
+    return states
 
 
 def init_with_sinus_on_velocity(x_dim: int, y_dim: int, epsilon=0.5) -> np.array:
@@ -50,17 +45,34 @@ def _check_conditions_velocity(F: np.array, x_dim: int, y_dim: int):
     assert F.shape[0] == 9, "incorrect number of channels"
 
 
-def plot_velocity_and_ideal_curve(saver: save.Saver, point: Tuple[int, int, int]):
-    L_z = saver.get_states()[0].shape[2]
-    a_0 = saver.parameters["epsilon"]
-    omega = saver.parameters["omega"]
+def plot_velocity_and_ideal_curve(states: States, params: Parameters, point: Tuple[int, int, int]):
+    L_z = states.get_states()[0].shape[2]
+    a_0 = params.epsilon
+    omega = params.omega
     z = point[2]
 
-    ideals = [boltzmann.scaled_analytic_solution(a_0, t, z, L_z, omega) for t in range(saver.get_num_states())]
-    velocities = [boltzmann.velocity(s)[point] for s in saver.get_states()]
+    ideals = [boltzmann.scaled_analytic_solution(a_0, t, z, L_z, omega) for t in range(states.get_num_states())]
+    velocities = [boltzmann.velocity(s)[point] for s in states.get_states()]
 
-    plot.velocity_over_time(velocities, ideals, point)
+    plot.velocity_against_ideal_over_time(velocities, ideals, point)
+
+
+def ideal_curve(states: States, params: Parameters) -> List[float]:
+    L_z = states.get_states()[0].shape[2]
+    a_0 = params.epsilon
+    omega = params.omega
+    z = params.point.y
+
+    return [
+        boltzmann.scaled_analytic_solution(a_0, t, z, L_z, omega)
+        for t in range(states.get_num_states())
+    ]
 
 
 if __name__ == '__main__':
-    run_velocity()
+    point = Point(0, 10, 10)
+    params = Parameters(path_="data/shear-wave-decay/velocity")
+    states = run_velocity(params)
+
+    plot.velocity_against_ideal_over_time(states, params, point)
+    plot.velocity_over_time_at(states, point)

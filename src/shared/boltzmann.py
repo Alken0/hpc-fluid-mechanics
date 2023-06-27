@@ -109,14 +109,14 @@ def viscosity(omega=1) -> float:
 
 
 def scaled_analytic_solution(a0, t, z, L_z, omega=1) -> float:
-    """"
-    To always get the exact solution for the given problem it's possible to use a scaling factor
+    """
+    To always get the exact solution for the given problem it's possible to use a scaling factor for the `analytical_solution`
 
     .. math::
         s = \\sin(2 \\pi / L_z) * z \n
         out = a_t * s.
 
-    :param a0: amplitude at time t=0
+    :param a0: amplitude at time t=0 (epsilon)
     :param t: timestep
     :param z: position of point
     :param L_z: Length of domain in direction z - use len(x) - 1!

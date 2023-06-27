@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from src.shared import boltzmann
-from src.shared.util import States
+from src.shared.util import States, Parameters, Point
 
 
 class Plotter:
@@ -88,13 +88,26 @@ def print_density(F: np.array):
     print()
 
 
-def density_aggregate_over_time(states: list[np.array]):
+def density_heatmap(states: States, step: int):
+    plt.figure()
+    plt.title(f'Density Function @{step}')
+    plt.xlabel('X')
+    plt.ylabel('Y')
+    density = boltzmann.density(states.get_states()[step])
+    data = np.swapaxes(density, 0, 1)
+    plt.imshow(data, cmap='magma')
+    cbar = plt.colorbar()
+    cbar.set_label("density", labelpad=+1)
+    plt.show()
+
+
+def density_aggregate_over_time(states: States):
     plt.figure()
     plt.title(f'Density Over Time')
     plt.xlabel('Time')
     plt.ylabel('Density')
 
-    densities = [boltzmann.density(s) for s in states]
+    densities = [boltzmann.density(s) for s in states.get_states()]
     iterations = range(len(densities))
 
     max_densities = [d.max() for d in densities]
@@ -109,13 +122,13 @@ def density_aggregate_over_time(states: list[np.array]):
     plt.show()
 
 
-def velocity_aggregate_over_time(states: list[np.array]):
+def velocity_aggregate_over_time(states: States):
     plt.figure(1)
     plt.title(f'Velocity Over Time')
     plt.xlabel('Time')
     plt.ylabel('Velocity')
 
-    velocities = [boltzmann.velocity(s) for s in states]
+    velocities = [boltzmann.velocity(s) for s in states.get_states()]
     iterations = range(len(velocities))
 
     max_velocities = [d.max() for d in velocities]
@@ -130,13 +143,13 @@ def velocity_aggregate_over_time(states: list[np.array]):
     plt.show()
 
 
-def velocity_over_time_at(states: list[np.array], point=(0, 0)):
+def velocity_over_time_at(states: States, point: Point):
     plt.figure(1)
     plt.title(f'velocity over time at position {point}')
     plt.xlabel('Time')
     plt.ylabel('Density')
 
-    velocities = [boltzmann.velocity(s)[0][point] for s in states]
+    velocities = [boltzmann.velocity(s)[point.to_tuple()] for s in states.get_states()]
     iterations = range(len(velocities))
 
     plt.plot(iterations, velocities, label=f"velocity")
@@ -145,12 +158,12 @@ def velocity_over_time_at(states: list[np.array], point=(0, 0)):
     plt.show()
 
 
-def velocity_field(states: [np.array], step: int, scale: float = 0.06):
+def velocity_field(states: States, step: int, scale: float = 0.06):
     plt.figure()
     plt.title(f'Velocity Function @{step}')
     plt.xlabel('X')
     plt.ylabel('Y')
-    data = np.swapaxes(boltzmann.velocity(states[step]), 1, 2)
+    data = np.swapaxes(boltzmann.velocity(states.get_states()[step]), 1, 2)
     plt.quiver(data[0], data[1], angles='xy', scale_units='xy', scale=scale)
     plt.show()
 
@@ -170,10 +183,7 @@ def density_over_time_at(states: list[np.array], point=(0, 0)):
     plt.show()
 
 
-def velocity_against_ideal_over_time(states: States):
-    params = states.parameters
-    point = states.parameters.point
-
+def velocity_against_ideal_over_time(states: States, params: Parameters, point: Point):
     plt.figure()
     plt.title(f'Velocity over time at position {point.to_tuple()}')
     plt.xlabel('Time')
@@ -185,7 +195,7 @@ def velocity_against_ideal_over_time(states: States):
     z = point.y
 
     ideals = [boltzmann.scaled_analytic_solution(a_0, t, z, L_z, omega) for t in range(states.get_num_states())]
-    velocities = [boltzmann.velocity(s)[point] for s in states.get_states()]
+    velocities = [boltzmann.velocity(s)[point.to_tuple()] for s in states.get_states()]
 
     iterations = range(len(velocities))
     plt.plot(iterations, velocities, label="measured")
@@ -208,7 +218,3 @@ def print_velocity(F, axis: int) -> None:
             output += f" {velocity[axis][x][y]:.2f}" if y != 0 else f"{velocity[axis][x][y]:.2f}"
         print(output)
     print()
-
-
-def save_density(state: States):
-    pass

@@ -43,10 +43,11 @@ def _check_conditions_density(F: np.array, x_dim: int, y_dim: int):
 if __name__ == '__main__':
     params = Parameters(path_="data/shear-wave-decay/density", iterations=1000)
     states = run_density(params)
-    
-    plot.density_aggregate_over_time(states.get_states())
-    plot.velocity_aggregate_over_time(states.get_states())
 
-    plot.velocity_field(states.get_states(), step=41, scale=0.06)
-    plot.velocity_field(states.get_states(), step=85, scale=0.06)
-    plot.velocity_field(states.get_states(), step=127, scale=0.06)
+    plot.density_heatmap(states, step=0)
+    plot.density_aggregate_over_time(states)
+    plot.velocity_aggregate_over_time(states)
+
+    plot.velocity_field(states, step=41, scale=0.06)
+    plot.velocity_field(states, step=85, scale=0.06)
+    plot.velocity_field(states, step=127, scale=0.06)
