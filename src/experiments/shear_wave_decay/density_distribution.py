@@ -3,8 +3,7 @@ from numpy import testing
 from tqdm import tqdm
 
 from src.shared import boltzmann, plot
-from src.shared.params import Parameters
-from src.shared.states import States
+from src.shared.util import States, Parameters, Saver
 
 
 def run_density(params: Parameters) -> States:
@@ -14,7 +13,7 @@ def run_density(params: Parameters) -> States:
         boltzmann.stream(F)
         boltzmann.collision(F, omega=1)
         states.add_state(F)
-    states.save(params.path)
+    Saver.save(params.path, states, params)
     return states
 
 
@@ -44,8 +43,10 @@ def _check_conditions_density(F: np.array, x_dim: int, y_dim: int):
 if __name__ == '__main__':
     params = Parameters(path_="data/shear-wave-decay/density", iterations=1000)
     states = run_density(params)
-    plot.max_density_over_time(states.get_states())
-    plot.max_velocity_over_time(states.get_states())
+    
+    plot.density_aggregate_over_time(states.get_states())
+    plot.velocity_aggregate_over_time(states.get_states())
+
     plot.velocity_field(states.get_states(), step=41, scale=0.06)
     plot.velocity_field(states.get_states(), step=85, scale=0.06)
     plot.velocity_field(states.get_states(), step=127, scale=0.06)
