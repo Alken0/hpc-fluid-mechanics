@@ -72,6 +72,8 @@ if __name__ == '__main__':
     params = Parameters(path_="data/shear-wave-decay/velocity", iterations=1000)
     states = run_velocity(params)
 
+    plot.velocity_at_x_column(states, 1, [0, 500, 999])
+
     scale = states.get_states()[0].max()
     print(f"using scale: {scale}")
     plot.velocity_field(states, step=0, scale=scale)

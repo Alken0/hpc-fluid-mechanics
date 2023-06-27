@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, List
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -122,8 +122,27 @@ def density_aggregate_over_time(states: States):
     plt.show()
 
 
+def velocity_at_x_column(states: States, col: int, steps: List[int]):
+    plt.figure()
+    plt.title(f'Velocity in Time for Column x={col} ')
+    plt.xlabel('Y')
+    plt.ylabel('Velocity')
+
+    velocities = [boltzmann.velocity(s) for s in states.get_states()]
+    y = range(states.get_states()[0].shape[2])
+
+    plt.plot(y, [0 for _ in range(len(y))], label="zero-line")
+
+    for step in steps:
+        column = np.array(velocities)[step, 0, col, :]
+        plt.plot(y, column, label=f"velocity @{step}")
+
+    plt.legend()
+    plt.show()
+
+
 def velocity_aggregate_over_time(states: States):
-    plt.figure(1)
+    plt.figure()
     plt.title(f'Velocity Over Time')
     plt.xlabel('Time')
     plt.ylabel('Velocity')
