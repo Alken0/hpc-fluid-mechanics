@@ -12,7 +12,7 @@ def run_density(params: Parameters) -> States:
     for t in tqdm(range(params.iterations)):
         boltzmann.stream(F)
         boltzmann.collision(F, omega=1)
-        states.add_state(F)
+        states.add(F)
     Saver.save(params.path, states, params)
     return states
 

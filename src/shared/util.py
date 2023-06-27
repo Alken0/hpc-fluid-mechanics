@@ -1,7 +1,6 @@
 import os
 from dataclasses import dataclass, field, InitVar
 from datetime import datetime
-from typing import List
 from typing import Tuple
 
 import numpy as np
@@ -38,13 +37,16 @@ class States:
     def __init__(self):
         self._states = []
 
-    def add_state(self, state: np.array):
+    def add(self, state: np.array):
         self._states.append(state.copy())
 
-    def get_states(self) -> List[np.array]:
-        return self._states
+    def numpy(self) -> np.array:
+        return np.array(self._states)
 
-    def get_num_states(self) -> int:
+    def __getitem__(self, item):
+        return self._states[item]
+
+    def __len__(self):
         return len(self._states)
 
 
@@ -55,8 +57,7 @@ class Saver:
         if not os.path.exists(path):
             os.makedirs(path)
 
-        states = np.array(states.get_states())
-        np.save(f"{path}/states.npy", states)
+        np.save(f"{path}/states.npy", states.numpy())
         with open(f"{path}/params.txt", 'w') as f:
             f.write(str(params))
 
@@ -65,7 +66,7 @@ class Saver:
         state_np = np.load(f"{path}/states.npy")
         states = States()
         for i in range(state_np.shape[0]):
-            states.add_state(state_np[i])
+            states.add(state_np[i])
 
         with open(f"{path}/params.txt", 'r') as f:
             params: Parameters = eval(f.read())

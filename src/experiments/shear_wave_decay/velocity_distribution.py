@@ -15,7 +15,7 @@ def run_velocity(params: Parameters) -> States:
     for t in tqdm(range(params.iterations)):
         boltzmann.stream(F)
         boltzmann.collision(F, omega=params.omega)
-        states.add_state(F)
+        states.add(F)
 
     Saver.save(params.path, states, params)
 
@@ -74,7 +74,7 @@ if __name__ == '__main__':
 
     plot.velocity_at_x_column(states, 1, [0, 500, 999])
 
-    scale = states.get_states()[0].max()
+    scale = states[0].max()
     print(f"using scale: {scale}")
     plot.velocity_field(states, step=0, scale=scale)
     plot.velocity_field(states, step=500, scale=scale)

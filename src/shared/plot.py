@@ -93,7 +93,7 @@ def density_heatmap(states: States, step: int):
     plt.title(f'Density Function @{step}')
     plt.xlabel('X')
     plt.ylabel('Y')
-    density = boltzmann.density(states.get_states()[step])
+    density = boltzmann.density(states[step])
     data = np.swapaxes(density, 0, 1)
     plt.imshow(data, cmap='magma')
     cbar = plt.colorbar()
@@ -107,7 +107,7 @@ def density_aggregate_over_time(states: States):
     plt.xlabel('Time')
     plt.ylabel('Density')
 
-    densities = [boltzmann.density(s) for s in states.get_states()]
+    densities = [boltzmann.density(s) for s in states]
     iterations = range(len(densities))
 
     max_densities = [d.max() for d in densities]
@@ -128,8 +128,8 @@ def velocity_at_x_column(states: States, col: int, steps: List[int]):
     plt.xlabel('Y')
     plt.ylabel('Velocity')
 
-    velocities = [boltzmann.velocity(s) for s in states.get_states()]
-    y = range(states.get_states()[0].shape[2])
+    velocities = [boltzmann.velocity(s) for s in states]
+    y = range(states[0].shape[2])
 
     plt.plot(y, [0 for _ in range(len(y))], label="zero-line")
 
@@ -147,7 +147,7 @@ def velocity_aggregate_over_time(states: States):
     plt.xlabel('Time')
     plt.ylabel('Velocity')
 
-    velocities = [boltzmann.velocity(s) for s in states.get_states()]
+    velocities = [boltzmann.velocity(s) for s in states]
     iterations = range(len(velocities))
 
     max_velocities = [d.max() for d in velocities]
@@ -182,7 +182,7 @@ def velocity_field(states: States, step: int, scale: float = 0.06):
     plt.title(f'Velocity Function @{step}')
     plt.xlabel('X')
     plt.ylabel('Y')
-    data = np.swapaxes(boltzmann.velocity(states.get_states()[step]), 1, 2)
+    data = np.swapaxes(boltzmann.velocity(states[step]), 1, 2)
     plt.quiver(data[0], data[1], angles='xy', scale_units='xy', scale=scale)
     plt.show()
 
@@ -208,13 +208,13 @@ def velocity_against_ideal_over_time(states: States, params: Parameters, point: 
     plt.xlabel('Time')
     plt.ylabel('Velocity')
 
-    L_z = states.get_states()[0].shape[2]
+    L_z = states[0].shape[2]
     a_0 = params.epsilon
     omega = params.omega
     z = point.y
 
-    ideals = [boltzmann.scaled_analytic_solution(a_0, t, z, L_z, omega) for t in range(states.get_num_states())]
-    velocities = [boltzmann.velocity(s)[point.to_tuple()] for s in states.get_states()]
+    ideals = [boltzmann.scaled_analytic_solution(a_0, t, z, L_z, omega) for t in range(len(states))]
+    velocities = [boltzmann.velocity(s)[point.to_tuple()] for s in states]
 
     iterations = range(len(velocities))
     plt.plot(iterations, velocities, label="measured")
