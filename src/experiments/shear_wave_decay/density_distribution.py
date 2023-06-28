@@ -41,8 +41,10 @@ def _check_conditions_density(F: np.array, x_dim: int, y_dim: int):
 
 
 if __name__ == '__main__':
-    params = Parameters(path_="data/shear-wave-decay/density", iterations=1000)
+    params = Parameters(path="data/shear-wave-decay/density")
     states = run_density(params)
+
+    Saver.save(params.save_path(), states, params)
 
     plot.density_heatmap(states, step=0)
     plot.density_aggregate_over_time(states)

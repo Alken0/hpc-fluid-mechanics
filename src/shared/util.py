@@ -1,6 +1,6 @@
+import datetime
 import os
-from dataclasses import dataclass, field, InitVar
-from datetime import datetime
+from dataclasses import dataclass
 from typing import Tuple
 
 import numpy as np
@@ -21,16 +21,16 @@ class Point:
 
 @dataclass
 class Parameters:
-    path_: InitVar[str]
-    path: str = field(init=False)
+    path: str
     x_dim: int = 100
     y_dim: int = 100
     omega: float = 1.0
     epsilon: float = 0.5
-    iterations: int = 200
+    iterations: int = 1000
+    time_stamp: datetime.datetime = datetime.datetime.now()  # other declarations do not work with reading from file
 
-    def __post_init__(self, path_: str):
-        self.path = f"{path_}/{datetime.now().isoformat()}"
+    def save_path(self):
+        return f"{self.path}/{self.time_stamp.isoformat()}"
 
 
 class States:
@@ -62,13 +62,18 @@ class Saver:
             f.write(str(params))
 
     @staticmethod
-    def load(path: str) -> States:
+    def load(path: str, latest=False) -> Tuple[States, Parameters]:
+        if latest:
+            all_runs = [x[0] for x in os.walk(path)]
+            path = sorted(all_runs)[-1]
+            print(f"loading run: {path}")
+
         state_np = np.load(f"{path}/states.npy")
         states = States()
         for i in range(state_np.shape[0]):
             states.add(state_np[i])
 
-        # with open(f"{path}/params.txt", 'r') as f:
-        #    params: Parameters = eval(f.read())
+        with open(f"{path}/params.txt", 'r') as f:
+            params: Parameters = eval(f.read())
 
-        return states
+        return states, params

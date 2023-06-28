@@ -5,7 +5,7 @@ from numpy import testing
 from tqdm import tqdm
 
 from src.shared import boltzmann, plot
-from src.shared.util import Parameters, Point, States, Saver
+from src.shared.util import Parameters, States, Saver, Point
 
 
 def run_velocity(params: Parameters) -> States:
@@ -68,9 +68,10 @@ def ideal_curve(states: States, params: Parameters) -> List[float]:
 
 
 if __name__ == '__main__':
-    point = Point(0, 10, 10)
-    params = Parameters(path_="data/shear-wave-decay/velocity", iterations=1000)
+    params = Parameters(path="data/shear-wave-decay/velocity")
     states = run_velocity(params)
+
+    Saver.save(params.save_path(), states, params)
 
     plot.velocity_at_x_column(states, 1, [0, 500, 999])
 
@@ -80,6 +81,6 @@ if __name__ == '__main__':
     plot.velocity_field(states, step=500, scale=scale)
     plot.velocity_field(states, step=999, scale=scale)
 
-    plot.velocity_against_ideal_over_time(states, params, point)
+    plot.velocity_against_ideal_over_time(states, params, Point(0, 10, 10))
     plot.velocity_aggregate_over_time(states)
     plot.density_aggregate_over_time(states)

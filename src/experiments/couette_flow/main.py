@@ -3,7 +3,7 @@ from tqdm import tqdm
 
 from src.experiments.couette_flow import util
 from src.shared import boltzmann, plot
-from src.shared.util import States, Parameters
+from src.shared.util import States, Parameters, Saver
 
 
 def run_couette_flow(params: Parameters) -> States:
@@ -26,8 +26,10 @@ def run_couette_flow(params: Parameters) -> States:
 
 
 if __name__ == '__main__':
-    params = Parameters(path_="", iterations=1000)
+    params = Parameters(path="data/couette-flow")
     states = run_couette_flow(params)
+
+    Saver.save(params.save_path(), states, params)
 
     for i in [0, 500, 999]:
         plot.velocity_field_couette_flow(states, i, scale=1)
