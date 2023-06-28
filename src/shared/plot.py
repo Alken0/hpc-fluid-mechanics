@@ -185,14 +185,25 @@ def velocity_field(states: States, step: int, scale: float = 0.06):
     plt.show()
 
 
-def velocity_field_with_boundaries_top_bottom(states: States, step: int, scale: float = 1.0):
+def velocity_field_couette_flow(states: States, step: int, scale: float = 1.0):
     plt.figure()
     plt.title(f'Velocity Field @{step}')
     plt.xlabel('X')
     plt.ylabel('Y')
-    data = np.swapaxes(boltzmann.velocity(states[step][:, :, 1:states[step].shape[2] - 2]), 1,
-                       2)
+
+    # plot velocities
+    velocities = boltzmann.velocity(states[step][:, :, 1:states[step].shape[2] - 2])
+    data = np.swapaxes(velocities, 1, 2)
     plt.quiver(data[0,], data[1], angles='xy', scale_units='xy', scale=scale)
+
+    # plot boundaries exactly inbetween artificial boundary and shown points
+    y = range(states[step].shape[1])
+    upper_boundary = np.ones(states[step].shape[1]) * states[step].shape[2] - 3 - 0.5
+    lower_boundary = np.ones(states[step].shape[1]) * -0.5
+    plt.plot(y, upper_boundary, label="upper (moving) boundary")
+    plt.plot(y, lower_boundary, label="lower (static) boundary")
+
+    plt.legend()
     plt.show()
 
 

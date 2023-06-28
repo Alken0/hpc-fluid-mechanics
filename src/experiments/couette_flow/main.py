@@ -11,7 +11,7 @@ def run_couette_flow(params: Parameters) -> States:
     F = util.add_boundaries(F)
     states = States()
 
-    u = np.ones(shape=(2, params.x_dim)) * 0.1
+    u = np.ones(shape=(2, params.x_dim)) * -0.1
     u[1] = 0
 
     # plotter = plot.Plotter(continuous=True, timeout=0.001, vmax=1, vmin=0)
@@ -30,4 +30,4 @@ if __name__ == '__main__':
     states = run_couette_flow(params)
 
     for i in [0, 500, 999]:
-        plot.velocity_field_with_boundaries_top_bottom(states, i, scale=1)
+        plot.velocity_field_couette_flow(states, i, scale=1)
