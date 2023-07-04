@@ -88,7 +88,7 @@ def equilibrium(rho: np.array, u: np.array) -> np.array:
     return feq
 
 
-def viscosity(omega=1) -> float:
+def viscosity_for_omega(omega=1) -> float:
     """
     Determines the viscosity for a given omega using the following calculation where :math:`C_s` is the speed of sound.
 
@@ -151,7 +151,7 @@ def analytic_solution(a0, t, L_z, omega=1) -> float:
     :return: analytical time evolution perturbation amplitude at timestep t
     """
 
-    exponent = -viscosity(omega) * t * (2 * np.pi / L_z) ** 2
+    exponent = -viscosity_for_omega(omega) * t * (2 * np.pi / L_z) ** 2
     solution = a0 * np.e ** exponent
 
     return solution
@@ -237,3 +237,19 @@ def slide_top(F: np.array, rho: float, u: np.array):
     calc_moving(6, 7)
     # redirect top to bottom
     calc_moving(2, 4)
+
+
+def viscosity_for_amplitude(N_y, y, a_0, a_t, t):
+    """
+    .. math::
+        u(y, 0) = a * \\sin(2 y \\pi / N_y) \n
+        k = \\sin(2 y \\pi / N_y) \n
+        a = -νk²a \n
+        a(t) = a_0 * e^{-νk²t} \n
+        ν = (\\ln(a_0) - \\ln(a(t))) / (k² * t)
+    :return: None
+    """
+    k = np.sin(2 * y * np.pi / N_y)
+    nominator = np.log(a_0) - np.log(a_t)
+    denominator = np.square(k) * t
+    return nominator / denominator
