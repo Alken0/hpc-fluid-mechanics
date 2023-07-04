@@ -1,3 +1,10 @@
+"""
+pressure
+stream
+boundary
+collision
+"""
+
 import numpy as np
 
 
@@ -234,3 +241,35 @@ def moving_wall(F: np.array, rho: float, u: np.array):
     calc_moving(6, 7)
     # redirect top to bottom
     calc_moving(2, 4)
+
+
+def pressure(F: np.array, pressure_difference: float, pressure: float):
+    """
+    applies pressure in x-direction to probability-density-function
+    :param F: np.array of shape (c,x+2,y+2) where "+2" means padding boundary of 1 on both sides
+    :return: None - modifies F itself
+    """
+
+    def field_at(index):
+        field = F[:, index, 1:F.shape[2] - 2]
+        return np.expand_dims(field, 1)
+
+    def equilibrium_at(index: int):
+        field = field_at(index)
+        rho = density(field)
+        u = velocity(field)
+        return equilibrium(rho, u)
+
+    n = F.shape[1] - 2  # - "boundary-left=1" - "one for len/index"
+
+    pressure_array = np.ones(shape=(1, F.shape[2] - 3)) * pressure
+    rho_out = pressure_array / (1 / 3)
+    rho_in = (pressure_array + pressure_difference) / (1 / 3)
+    u_n = velocity(field_at(n))
+    u_1 = velocity(field_at(1))
+
+    F_0 = equilibrium(rho_in, u_n) + (field_at(n) - equilibrium_at(n))
+    F_n1 = equilibrium(rho_out, u_1) + (field_at(1) - equilibrium_at(1))
+
+    F[:, 0, 1:F.shape[2] - 2] = np.squeeze(F_0, 1)
+    F[:, n + 1, 1:F.shape[2] - 2] = np.squeeze(F_n1, 1)
