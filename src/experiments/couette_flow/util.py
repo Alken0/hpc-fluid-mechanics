@@ -4,12 +4,9 @@ from src.shared import boltzmann
 
 
 def init_probability_density_function(x_dim: int, y_dim: int) -> np.array:
-    # rho = np.ones(shape=(x_dim, y_dim))
-    # u = np.zeros(shape=(2, x_dim, y_dim))
-    # return boltzmann.equilibrium(rho, u)
-    F = np.zeros(shape=(9, x_dim, y_dim))
-    F[0, :, :] = 1
-    return F
+    rho = np.ones(shape=(x_dim, y_dim))
+    u = np.zeros(shape=(2, x_dim, y_dim))
+    return boltzmann.equilibrium(rho, u)
 
 
 def add_boundaries(F: np.array) -> np.array:
