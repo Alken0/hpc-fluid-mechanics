@@ -57,6 +57,16 @@ class Plotter:
         plt.quiver(data[0], data[1], angles='xy', scale_units='xy', scale=1)
         self._show()
 
+    def stream(self, F: np.array, step: int):
+        plt.figure(3)
+        plt.title(f'Stream Function' if step is None else f'Stream Function @{step}')
+        plt.xlabel('X')
+        plt.ylabel('Y')
+        x, y = np.meshgrid(np.arange(F.shape[1]), np.arange(F.shape[2]))
+        u, v = np.swapaxes(boltzmann.velocity(F), 1, 2)
+        plt.streamplot(x, y, u, v)
+        self._show()
+
 
 def print_pdf(F: np.array):
     """

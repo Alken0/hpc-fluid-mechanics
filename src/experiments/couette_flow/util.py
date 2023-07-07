@@ -30,10 +30,10 @@ def apply_bounce_back(F: np.array, rho: float, u: np.array):
 
 def apply_bounce_back_bottom(F: np.array):
     # redirect bottom-right to top-right
-    F[5, :, 0] = F[8, :, 0]
+    F[6, :, 0] = F[8, :, 0]
     F[8, :, 0] = 0
     # redirect bottom-left to top-left
-    F[6, :, 0] = F[7, :, 0]
+    F[5, :, 0] = F[7, :, 0]
     F[7, :, 0] = 0
     # redirect bottom to top
     F[2, :, 0] = F[4, :, 0]

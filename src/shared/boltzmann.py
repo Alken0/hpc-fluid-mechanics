@@ -164,7 +164,7 @@ def analytic_solution(a0, t, L_z, omega=1) -> float:
     return solution
 
 
-def boundary(F: np.array, top=False, bottom=False, left=False, right=False, all=False) -> None:
+def boundary(F: np.array, top=False, bottom=False, left=False, right=False) -> None:
     """
     applies boundaries
 
@@ -173,43 +173,37 @@ def boundary(F: np.array, top=False, bottom=False, left=False, right=False, all=
     :param left: apply a boundary to the left side
     :param bottom: apply a boundary to the bottom side
     :param top: apply a boundary to the top side
-    :param all: shortcut to apply boundary to all sides
 
     :return: Nothing, the PDF gets modified
     """
-    if all:
-        top, bottom, left, right = True, True, True, True
 
-    # top-left-corner
-    if top or left:
-        pass
     if top:
         len_y = F.shape[2] - 1
         # redirect top-right to bottom-right
-        F[8, :, len_y] = F[5, :, len_y]
+        F[7, :, len_y] = F[5, :, len_y]
         F[5, :, len_y] = 0
         # redirect top-left to bottom-left
-        F[7, :, len_y] = F[6, :, len_y]
+        F[8, :, len_y] = F[6, :, len_y]
         F[6, :, len_y] = 0
         # redirect top to bottom
         F[4, :, len_y] = F[2, :, len_y]
         F[2, :, len_y] = 0
     if bottom:
         # redirect bottom-right to top-right
-        F[5, :, 0] = F[8, :, 0]
+        F[6, :, 0] = F[8, :, 0]
         F[8, :, 0] = 0
         # redirect bottom-left to top-left
-        F[6, :, 0] = F[7, :, 0]
+        F[5, :, 0] = F[7, :, 0]
         F[7, :, 0] = 0
         # redirect bottom to top
         F[2, :, 0] = F[4, :, 0]
         F[4, :, 0] = 0
     if left:
         # redirect top-left to top-right
-        F[5, 0, :] = F[6, 0, :]
+        F[8, 0, :] = F[6, 0, :]
         F[6, 0, :] = 0
         # redirect bottom-left to bottom-right
-        F[8, 0, :] = F[7, 0, :]
+        F[5, 0, :] = F[7, 0, :]
         F[7, 0, :] = 0
         # redirect left to right
         F[1, 0, :] = F[3, 0, :]
@@ -217,10 +211,10 @@ def boundary(F: np.array, top=False, bottom=False, left=False, right=False, all=
     if right:
         len_x = F.shape[1] - 1
         # redirect top-right to top-left
-        F[6, len_x, :] = F[5, len_x, :]
+        F[7, len_x, :] = F[5, len_x, :]
         F[5, len_x, :] = 0
         # redirect bottom-right to bottom-left
-        F[7, len_x, :] = F[8, len_x, :]
+        F[6, len_x, :] = F[8, len_x, :]
         F[8, len_x, :] = 0
         # redirect right to left
         F[3, len_x, :] = F[1, len_x, :]
@@ -262,14 +256,20 @@ def pressure(F: np.array, pressure_difference: float, pressure: float):
 
     n = F.shape[1] - 2  # - "boundary-left=1" - "one for len/index"
 
+    rho = density(F[:, :, 1:F.shape[2] - 2])
+    u = velocity(F[:, :, 1:F.shape[2] - 2])
+    equi = equilibrium(rho, u)
+    equi_n = np.expand_dims(equi[:, n], 1)
+    equi_1 = np.expand_dims(equi[:, n], 1)
+
     pressure_array = np.ones(shape=(1, F.shape[2] - 3)) * pressure
     rho_out = pressure_array / (1 / 3)
     rho_in = (pressure_array + pressure_difference) / (1 / 3)
-    u_n = velocity(field_at(n))
-    u_1 = velocity(field_at(1))
+    u_n = np.expand_dims(u[:, n, 1:F.shape[2] - 2], 1)  # velocity(field_at(n))
+    u_1 = np.expand_dims(u[:, 1, 1:F.shape[2] - 2], 1)  # velocity(field_at(1))
 
-    F_0 = equilibrium(rho_in, u_n) + (field_at(n) - equilibrium_at(n))
-    F_n1 = equilibrium(rho_out, u_1) + (field_at(1) - equilibrium_at(1))
-
-    F[:, 0, 1:F.shape[2] - 2] = np.squeeze(F_0, 1)
+    F_n1 = equilibrium(rho_out, u_1) + (field_at(1) - equi_1)
     F[:, n + 1, 1:F.shape[2] - 2] = np.squeeze(F_n1, 1)
+
+    F_0 = equilibrium(rho_in, u_n) + (field_at(n) - equi_n)
+    F[:, 0, 1:F.shape[2] - 2] = np.squeeze(F_0, 1)

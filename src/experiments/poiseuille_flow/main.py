@@ -10,7 +10,7 @@ def run_poiseuille_flow(params: Parameters) -> States:
     F = util.add_boundaries(F)
     states = States()
 
-    plotter = plot.Plotter(continuous=True, timeout=0.01, vmax=1, vmin=0)
+    plotter = plot.Plotter(continuous=True, timeout=0.1, vmax=1, vmin=0)
     for i in tqdm(range(params.iterations)):
         boltzmann.pressure(F, pressure=1, pressure_difference=-0.01)
         boltzmann.stream(F)
@@ -19,10 +19,11 @@ def run_poiseuille_flow(params: Parameters) -> States:
 
         states.add(F)
         plotter.velocity(F[:, 1:F.shape[1] - 2, 1:F.shape[2] - 2], step=i)
+        # plotter.stream(F[:, 1:F.shape[1] - 3, 1:F.shape[2] - 3], step=i)
 
     return states
 
 
 if __name__ == '__main__':
-    params = Parameters(path="data/poiseuille-flow", x_dim=100, y_dim=100)
+    params = Parameters(path="data/poiseuille-flow", x_dim=10, y_dim=10)
     states = run_poiseuille_flow(params)
