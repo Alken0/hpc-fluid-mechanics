@@ -1,11 +1,18 @@
+import numpy as np
+
 from src.experiments.poiseuille_flow import util
 from src.shared import boltzmann, plot
 from src.shared.util import States, Parameters
 
 
+def init(x_dim, y_dim) -> np.array:
+    rho = np.ones(shape=(x_dim, y_dim))
+    u = np.zeros(shape=(2, x_dim, y_dim))
+    return boltzmann.equilibrium(rho, u)
+
+
 def run_poiseuille_flow(params: Parameters) -> States:
-    F = util.init_probability_density_function(params.x_dim, params.y_dim)
-    F = util.add_boundaries_better(F)
+    F = init(params.x_dim + 2, params.y_dim + 2)
     states = States()
 
     plotter = plot.Plotter(continuous=True, timeout=0.1, vmax=1, vmin=0)
