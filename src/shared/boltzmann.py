@@ -263,11 +263,8 @@ def pressure(F: np.array, pressure_in: float, pressure_out: float):
     u_n = np.expand_dims(u[:, n], 1)
     u_1 = np.expand_dims(u[:, 1], 1)
 
-    direction_0 = [1, 5, 8]  # [3, 7, 6]
-    direction_n1 = [3, 7, 6]  # [1, 5, 8]
-
     F_0 = equilibrium(rho_in, u_n) + (field_at(n) - equi_n)
-    F[direction_0, 0, 1:-1] = np.squeeze(F_0, 1)[[direction_0]]
+    F[:, 0, 1:-1] = np.squeeze(F_0, 1)
 
     F_n1 = equilibrium(rho_out, u_1) + (field_at(1) - equi_1)
-    F[direction_n1, n + 1, 1:-1] = np.squeeze(F_n1, 1)[[direction_n1]]
+    F[:, n + 1, 1:-1] = np.squeeze(F_n1, 1)

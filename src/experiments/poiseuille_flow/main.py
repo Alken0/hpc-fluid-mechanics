@@ -38,7 +38,7 @@ if __name__ == '__main__':
         x_dim=10,
         y_dim=10,
         omega=0.75,
-        pressure_in=1.005,
-        pressure_out=1.0
+        pressure_in=0.99,
+        pressure_out=0.01
     )
     states = run_poiseuille_flow(params)
