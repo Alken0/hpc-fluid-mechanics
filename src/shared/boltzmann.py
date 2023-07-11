@@ -268,3 +268,19 @@ def pressure(F: np.array, pressure_in: float, pressure_out: float):
 
     F_n1 = equilibrium(rho_out, u_1) + (field_at(1) - equi_1)
     F[:, n + 1, 1:-1] = np.squeeze(F_n1, 1)
+
+def apply_bounce_back(F: np.array, top=False, bot=False):
+    if top:
+        # redirect top-right to bottom-right
+        F[7, :, -1] = np.roll(F[5, :, -1], -1)
+        # redirect top-left to bottom-left
+        F[8, :, -1] = np.roll(F[6, :, -1], 1)
+        # redirect top to bottom
+        F[4, :, -1] = F[2, :, -1]
+    if bot:
+        # redirect bottom-right to top-right
+        F[6, :, 0] = np.roll(F[8, :, 0], -1)
+        # redirect bottom-left to top-left
+        F[5, :, 0] = np.roll(F[7, :, 0], 1)
+        # redirect bottom to top
+        F[2, :, 0] = F[4, :, 0]

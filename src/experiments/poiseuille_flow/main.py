@@ -1,6 +1,5 @@
 import numpy as np
 
-from src.experiments.poiseuille_flow import util
 from src.shared import boltzmann, plot
 from src.shared.util import States, Parameters
 
@@ -21,7 +20,7 @@ def run_poiseuille_flow(params: Parameters) -> States:
 
         boltzmann.pressure(F, pressure_in=params.pressure_in, pressure_out=params.pressure_out)
         boltzmann.stream(F)
-        util.apply_bounce_back(F)
+        boltzmann.apply_bounce_back(F, top=True, bot=True)
 
         states.add(F)
         u = boltzmann.velocity(F)
