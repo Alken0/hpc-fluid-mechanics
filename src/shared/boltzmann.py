@@ -245,17 +245,17 @@ def pressure(F: np.array, pressure_in: float, pressure_out: float):
     """
 
     def field_at(index):
-        field = F[:, index, 1:F.shape[2] - 1]
+        field = F[:, index, 1:-1]
         return np.expand_dims(field, 1)
 
     n = F.shape[1] - 2  # - "boundary-left=1" - "one for len/index"
 
-    pressure_array = np.ones(shape=(1, F.shape[2] - 2)) * pressure
+    pressure_array = np.ones(shape=(1, F.shape[2] - 2)) * pressure_in
     rho_out = pressure_array / (1 / 3)
-    rho_in = (pressure_array + pressure_difference) / (1 / 3)
+    rho_in = (pressure_array + pressure_out) / (1 / 3)
 
-    u = velocity(F[:, :, 1:F.shape[2] - 1])
-    rho = density(F[:, :, 1:F.shape[2] - 1])
+    u = velocity(F[:, :, 1:-1])
+    rho = density(F[:, :, 1:-1])
     equi = equilibrium(rho, u)
 
     equi_1 = np.expand_dims(equi[:, 1], 1)
@@ -263,8 +263,11 @@ def pressure(F: np.array, pressure_in: float, pressure_out: float):
     u_n = np.expand_dims(u[:, n], 1)
     u_1 = np.expand_dims(u[:, 1], 1)
 
+    direction_0 = [3, 7, 6]
+    direction_n1 = [1, 5, 8]
+
     F_0 = equilibrium(rho_in, u_n) + (field_at(n) - equi_n)
-    F[:, 0, 1:F.shape[2] - 1] = np.squeeze(F_0, 1)
+    F[:, 0, 1:-1] = np.squeeze(F_0, 1)  # direction_0
 
     F_n1 = equilibrium(rho_out, u_1) + (field_at(1) - equi_1)
     F[:, n + 1, 1:F.shape[2] - 1] = np.squeeze(F_n1, 1)
