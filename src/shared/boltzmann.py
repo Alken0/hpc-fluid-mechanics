@@ -188,27 +188,32 @@ def pressure(F: np.array, pressure_in: float, pressure_out: float):
     """
 
     def field_at(index):
+        # helper function which returns the field at a given index and adds a needed dimension
         field = F[:, index, 1:-1]
         return np.expand_dims(field, 1)
 
     n = F.shape[1] - 2  # - "boundary-left=1" - "one for len/index"
 
+    # calculate rho-in/out
     pressure_array = np.ones(shape=(1, F.shape[2] - 2))
     rho_in = pressure_array * pressure_in / (1 / 3)
     rho_out = pressure_array * pressure_out / (1 / 3)
 
+    # get density/velocity/equilibrium of whole field for later calculations
     u = velocity(F[:, :, 1:-1])
     rho = density(F[:, :, 1:-1])
     equi = equilibrium(rho, u)
 
+    # get needed columns of the previous field (expand to match dimensions)
     equi_1 = np.expand_dims(equi[:, 1], 1)
     equi_n = np.expand_dims(equi[:, n], 1)
-    u_n = np.expand_dims(u[:, n], 1)
     u_1 = np.expand_dims(u[:, 1], 1)
+    u_n = np.expand_dims(u[:, n], 1)
 
+    # set F at location x_0
     F_0 = equilibrium(rho_in, u_n) + (field_at(n) - equi_n)
     F[:, 0, 1:-1] = np.squeeze(F_0, 1)
-
+    # set F at location x_n+1
     F_n1 = equilibrium(rho_out, u_1) + (field_at(1) - equi_1)
     F[:, n + 1, 1:-1] = np.squeeze(F_n1, 1)
 

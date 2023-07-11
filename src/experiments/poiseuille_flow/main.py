@@ -21,9 +21,8 @@ def run_poiseuille_flow(params: Parameters):
         boltzmann.apply_bounce_back(F, top=True, bot=True)
 
         # debugging stuff
-        u = boltzmann.velocity(F)
-        print(u[0, 1, 1])
-        plotter.velocity(F, step=i)
+        print(boltzmann.velocity(F)[0, 1, 1])
+        plotter.velocity(F, step=i)  # only use one of the plotter-functions at the same time
         # plotter.density(F, step=i)
         # plotter.stream(F, step=i)
 
