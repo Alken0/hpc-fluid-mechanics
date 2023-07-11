@@ -26,6 +26,8 @@ class Parameters:
     y_dim: int = 100
     omega: float = 1.0
     epsilon: float = 0.5
+    pressure_in: float = 1.005
+    pressure_out: float = 1.0
     iterations: int = 1000
     time_stamp: datetime.datetime = datetime.datetime.now()  # other declarations do not work with reading from file
 

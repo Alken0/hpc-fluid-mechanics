@@ -237,7 +237,7 @@ def moving_wall(F: np.array, rho: float, u: np.array):
     calc_moving(2, 4)
 
 
-def pressure(F: np.array, pressure_difference: float, pressure: float):
+def pressure(F: np.array, pressure_in: float, pressure_out: float):
     """
     applies pressure in x-direction to probability-density-function
     :param F: np.array of shape (c,x+2,y+2) where "+2" means padding boundary of 1 on both sides
