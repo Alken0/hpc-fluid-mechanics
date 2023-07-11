@@ -1,4 +1,4 @@
-from tqdm import tqdm
+import numpy as np
 
 from src.experiments.poiseuille_flow import util
 from src.shared import boltzmann, plot
@@ -11,14 +11,17 @@ def run_poiseuille_flow(params: Parameters) -> States:
     states = States()
 
     plotter = plot.Plotter(continuous=True, timeout=0.1, vmax=1, vmin=0)
-    for i in tqdm(range(params.iterations)):
-        boltzmann.pressure(F, pressure=1, pressure_difference=-0.01)
+    for i in range(params.iterations):
+        boltzmann.pressure(F, pressure=1, pressure_difference=0.01)
+        F_copy = np.copy(F)
         boltzmann.stream(F)
-        util.apply_bounce_back(F)
-        boltzmann.collision(F[:, 1:F.shape[1] - 2, 1:F.shape[2] - 2])
+        util.apply_bounce_back(F, F_copy)
+        boltzmann.collision(F[:, :, :])
 
         states.add(F)
-        plotter.velocity(F[:, 1:F.shape[1] - 2, 1:F.shape[2] - 2], step=i)
+        u = boltzmann.velocity(F)
+        print(u[0, 1, 1])
+        # plotter.velocity(F[:, 1:F.shape[1] - 2, 1:F.shape[2] - 2], step=i)
         # plotter.stream(F[:, 1:F.shape[1] - 3, 1:F.shape[2] - 3], step=i)
 
     return states
