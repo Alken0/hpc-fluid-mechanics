@@ -164,63 +164,6 @@ def analytic_solution(a0, t, L_z, omega=1) -> float:
     return solution
 
 
-def boundary(F: np.array, top=False, bottom=False, left=False, right=False) -> None:
-    """
-    applies boundaries
-
-    :param F: Probability Density Function of shape (c, x, y)
-    :param right: apply a boundary to the right side
-    :param left: apply a boundary to the left side
-    :param bottom: apply a boundary to the bottom side
-    :param top: apply a boundary to the top side
-
-    :return: Nothing, the PDF gets modified
-    """
-
-    if top:
-        len_y = F.shape[2] - 1
-        # redirect top-right to bottom-right
-        F[7, :, len_y] = F[5, :, len_y]
-        F[5, :, len_y] = 0
-        # redirect top-left to bottom-left
-        F[8, :, len_y] = F[6, :, len_y]
-        F[6, :, len_y] = 0
-        # redirect top to bottom
-        F[4, :, len_y] = F[2, :, len_y]
-        F[2, :, len_y] = 0
-    if bottom:
-        # redirect bottom-right to top-right
-        F[6, :, 0] = F[8, :, 0]
-        F[8, :, 0] = 0
-        # redirect bottom-left to top-left
-        F[5, :, 0] = F[7, :, 0]
-        F[7, :, 0] = 0
-        # redirect bottom to top
-        F[2, :, 0] = F[4, :, 0]
-        F[4, :, 0] = 0
-    if left:
-        # redirect top-left to top-right
-        F[8, 0, :] = F[6, 0, :]
-        F[6, 0, :] = 0
-        # redirect bottom-left to bottom-right
-        F[5, 0, :] = F[7, 0, :]
-        F[7, 0, :] = 0
-        # redirect left to right
-        F[1, 0, :] = F[3, 0, :]
-        F[3, 0, :] = 0
-    if right:
-        len_x = F.shape[1] - 1
-        # redirect top-right to top-left
-        F[7, len_x, :] = F[5, len_x, :]
-        F[5, len_x, :] = 0
-        # redirect bottom-right to bottom-left
-        F[6, len_x, :] = F[8, len_x, :]
-        F[8, len_x, :] = 0
-        # redirect right to left
-        F[3, len_x, :] = F[1, len_x, :]
-        F[1, len_x] = 0
-
-
 def moving_wall(F: np.array, rho: float, u: np.array):
     len_y = F.shape[2] - 1
 
@@ -251,8 +194,8 @@ def pressure(F: np.array, pressure_in: float, pressure_out: float):
     n = F.shape[1] - 2  # - "boundary-left=1" - "one for len/index"
 
     pressure_array = np.ones(shape=(1, F.shape[2] - 2))
-    rho_out = pressure_array * pressure_out / (1 / 3)
     rho_in = pressure_array * pressure_in / (1 / 3)
+    rho_out = pressure_array * pressure_out / (1 / 3)
 
     u = velocity(F[:, :, 1:-1])
     rho = density(F[:, :, 1:-1])
@@ -268,6 +211,7 @@ def pressure(F: np.array, pressure_in: float, pressure_out: float):
 
     F_n1 = equilibrium(rho_out, u_1) + (field_at(1) - equi_1)
     F[:, n + 1, 1:-1] = np.squeeze(F_n1, 1)
+
 
 def apply_bounce_back(F: np.array, top=False, bot=False):
     if top:

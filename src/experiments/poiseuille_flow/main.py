@@ -1,7 +1,7 @@
 import numpy as np
 
 from src.shared import boltzmann, plot
-from src.shared.util import States, Parameters
+from src.shared.util import Parameters
 
 
 def init(x_dim, y_dim) -> np.array:
@@ -10,25 +10,22 @@ def init(x_dim, y_dim) -> np.array:
     return boltzmann.equilibrium(rho, u)
 
 
-def run_poiseuille_flow(params: Parameters) -> States:
+def run_poiseuille_flow(params: Parameters):
     F = init(params.x_dim + 2, params.y_dim + 2)
-    states = States()
 
-    plotter = plot.Plotter(continuous=True, timeout=0.1, vmax=1, vmin=0)
+    plotter = plot.Plotter(continuous=True, timeout=1, vmax=1, vmin=0)
     for i in range(params.iterations):
         boltzmann.collision(F, omega=params.omega)
-
         boltzmann.pressure(F, pressure_in=params.pressure_in, pressure_out=params.pressure_out)
         boltzmann.stream(F)
         boltzmann.apply_bounce_back(F, top=True, bot=True)
 
-        states.add(F)
+        # debugging stuff
         u = boltzmann.velocity(F)
         print(u[0, 1, 1])
-        plotter.velocity(F[:, 1:-1, 1:-1], step=i)
-        # plotter.stream(F[:, 1:F.shape[1] - 3, 1:F.shape[2] - 3], step=i)
-
-    return states
+        plotter.velocity(F, step=i)
+        # plotter.density(F, step=i)
+        # plotter.stream(F, step=i)
 
 
 if __name__ == '__main__':
@@ -40,4 +37,4 @@ if __name__ == '__main__':
         pressure_in=0.99,
         pressure_out=0.01
     )
-    states = run_poiseuille_flow(params)
+    run_poiseuille_flow(params)
