@@ -250,9 +250,9 @@ def pressure(F: np.array, pressure_in: float, pressure_out: float):
 
     n = F.shape[1] - 2  # - "boundary-left=1" - "one for len/index"
 
-    pressure_array = np.ones(shape=(1, F.shape[2] - 2)) * pressure_in
-    rho_out = pressure_array / (1 / 3)
-    rho_in = (pressure_array + pressure_out) / (1 / 3)
+    pressure_array = np.ones(shape=(1, F.shape[2] - 2))
+    rho_out = pressure_array * pressure_out / (1 / 3)
+    rho_in = pressure_array * pressure_in / (1 / 3)
 
     u = velocity(F[:, :, 1:-1])
     rho = density(F[:, :, 1:-1])
