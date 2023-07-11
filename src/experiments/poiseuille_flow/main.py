@@ -10,10 +10,11 @@ def run_poiseuille_flow(params: Parameters) -> States:
 
     plotter = plot.Plotter(continuous=True, timeout=0.1, vmax=1, vmin=0)
     for i in range(params.iterations):
+        boltzmann.collision(F, omega=params.omega)
+
         boltzmann.pressure(F, pressure_in=params.pressure_in, pressure_out=params.pressure_out)
         boltzmann.stream(F)
         util.apply_bounce_back(F)
-        boltzmann.collision(F, omega=params.omega)
 
         states.add(F)
         u = boltzmann.velocity(F)
