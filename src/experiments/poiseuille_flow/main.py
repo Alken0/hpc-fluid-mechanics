@@ -1,5 +1,3 @@
-import numpy as np
-
 from src.experiments.poiseuille_flow import util
 from src.shared import boltzmann, plot
 from src.shared.util import States, Parameters
@@ -13,9 +11,8 @@ def run_poiseuille_flow(params: Parameters) -> States:
     plotter = plot.Plotter(continuous=True, timeout=0.1, vmax=1, vmin=0)
     for i in range(params.iterations):
         boltzmann.pressure(F, pressure=1, pressure_difference=0.01)
-        F_copy = np.copy(F)
         boltzmann.stream(F)
-        util.apply_bounce_back(F, F_copy)
+        util.apply_bounce_back(F)
         boltzmann.collision(F, omega=params.omega)
 
         states.add(F)
@@ -28,5 +25,5 @@ def run_poiseuille_flow(params: Parameters) -> States:
 
 
 if __name__ == '__main__':
-    params = Parameters(path="data/poiseuille-flow", x_dim=10, y_dim=10)
+    params = Parameters(path="data/poiseuille-flow", x_dim=10, y_dim=10, omega=0.75)
     states = run_poiseuille_flow(params)
