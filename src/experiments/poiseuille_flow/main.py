@@ -7,7 +7,7 @@ from src.shared.util import States, Parameters
 
 def run_poiseuille_flow(params: Parameters) -> States:
     F = util.init_probability_density_function(params.x_dim, params.y_dim)
-    F = util.add_boundaries(F)
+    F = util.add_boundaries_better(F)
     states = States()
 
     plotter = plot.Plotter(continuous=True, timeout=0.1, vmax=1, vmin=0)
@@ -16,7 +16,7 @@ def run_poiseuille_flow(params: Parameters) -> States:
         F_copy = np.copy(F)
         boltzmann.stream(F)
         util.apply_bounce_back(F, F_copy)
-        boltzmann.collision(F[:, :, :])
+        boltzmann.collision(F, omega=params.omega)
 
         states.add(F)
         u = boltzmann.velocity(F)
