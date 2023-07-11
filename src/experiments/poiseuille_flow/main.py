@@ -33,6 +33,12 @@ def run_poiseuille_flow(params: Parameters) -> States:
 
 
 if __name__ == '__main__':
-    params = Parameters(path="data/poiseuille-flow", x_dim=10, y_dim=10, omega=0.75, pressure_in=1.005,
-                        pressure_out=1.0)
+    params = Parameters(
+        path="data/poiseuille-flow",
+        x_dim=10,
+        y_dim=10,
+        omega=0.75,
+        pressure_in=1.005,
+        pressure_out=1.0
+    )
     states = run_poiseuille_flow(params)
