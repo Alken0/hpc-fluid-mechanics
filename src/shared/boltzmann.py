@@ -160,30 +160,30 @@ def analytic_solution(a0, t, L_z, omega=1) -> float:
 def bounce_back(F: np.array, top=False, bot=False, left=False, right=False):
     if top:
         # redirect top-right to bottom-right
-        F[7, :, -1] = np.roll(F[6, :, -1], -1)
+        F[7, :, -1] = np.roll(F[5, :, -1], -1)
         # redirect top-left to bottom-left
-        F[8, :, -1] = np.roll(F[5, :, -1], 1)
+        F[8, :, -1] = np.roll(F[6, :, -1], 1)
         # redirect top to bottom
         F[4, :, -1] = F[2, :, -1]
     if bot:
         # redirect bottom-right to top-right
-        F[6, :, 0] = np.roll(F[7, :, 0], -1)
+        F[6, :, 0] = np.roll(F[8, :, 0], -1)
         # redirect bottom-left to top-left
-        F[5, :, 0] = np.roll(F[8, :, 0], 1)
+        F[5, :, 0] = np.roll(F[7, :, 0], 1)
         # redirect bottom to top
         F[2, :, 0] = F[4, :, 0]
     if left:
         # redirect bottom-left to bottom-right
-        F[5, 0, :] = np.roll(F[6, 0, :], 1)
+        F[5, 0, :] = np.roll(F[7, 0, :], 1)
         # redirect top-left to top-right
-        F[8, 0, :] = np.roll(F[7, 0, :], -1)
+        F[8, 0, :] = np.roll(F[6, 0, :], -1)
         # redirect left to right
         F[1, 0, :] = F[3, 0, :]
     if right:
         # redirect top-right to top-left
-        F[6, -1, :] = np.roll(F[5, -1, :], 1)
+        F[6, -1, :] = np.roll(F[8, -1, :], 1)
         # redirect bottom-right to bottom-left
-        F[7, -1, :] = np.roll(F[8, -1, :], -1)
+        F[7, -1, :] = np.roll(F[5, -1, :], -1)
         # redirect right to left
         F[3, -1, :] = F[1, -1, :]
 
