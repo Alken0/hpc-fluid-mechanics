@@ -13,7 +13,7 @@ def init(x_dim, y_dim) -> np.array:
 def run_poiseuille_flow(params: Parameters):
     F = init(params.x_dim + 2, params.y_dim + 2)
 
-    plotter = plot.Plotter(continuous=True, timeout=1, vmax=1, vmin=0)
+    plotter = plot.Plotter(continuous=True, timeout=0.1, vmax=1, vmin=0)
     for i in range(params.iterations):
         boltzmann.collision(F, omega=params.omega)
         boltzmann.pressure(F, pressure_in=params.pressure_in, pressure_out=params.pressure_out)
@@ -32,8 +32,8 @@ if __name__ == '__main__':
         path="data/poiseuille-flow",
         x_dim=10,
         y_dim=10,
-        omega=0.75,
-        pressure_in=0.99,
-        pressure_out=0.01
+        omega=1.0,
+        pressure_in=0.03,
+        pressure_out=0.3
     )
     run_poiseuille_flow(params)
