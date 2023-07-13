@@ -188,13 +188,10 @@ def bounce_back(F: np.array, top=False, bot=False, left=False, right=False):
         F[3, -1, :] = F[1, -1, :]
 
 
-def moving_wall(F: np.array, rho: float, u: np.array):
-    len_y = F.shape[2] - 1
-
+def slide_top(F: np.array, rho: float, u: np.array):
     def calc_moving(i, i_opposite):
         second_part = 2 * w[i] * rho * (np.einsum('c,cy -> y', c[:, i], u) / (1 / 3))
-        F[i_opposite, :, len_y] = F[i, :, len_y] - second_part
-        F[i, :, len_y] = 0
+        F[i_opposite, :, -1] = F[i, :, -1] - second_part
 
     # redirect top-right to bottom-right
     calc_moving(5, 8)

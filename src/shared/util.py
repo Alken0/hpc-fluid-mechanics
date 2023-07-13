@@ -26,6 +26,8 @@ class Parameters:
     y_dim: int = 100
     omega: float = 1.0
     epsilon: float = 0.5
+    sliding_rho: float = 1.0
+    sliding_u: float = -0.1
     iterations: int = 1000
     time_stamp: datetime.datetime = datetime.datetime.now()  # other declarations do not work with reading from file
 

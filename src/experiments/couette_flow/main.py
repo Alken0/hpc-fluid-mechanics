@@ -1,35 +1,48 @@
+from typing import Tuple
+
 import numpy as np
 from tqdm import tqdm
 
-from src.experiments.couette_flow import util
 from src.shared import boltzmann, plot
-from src.shared.util import States, Parameters, Saver
+from src.shared.util import States, Parameters
 
 
-def run_couette_flow(params: Parameters) -> States:
-    F = util.init_probability_density_function(params.x_dim, params.y_dim)
-    F = util.add_boundaries(F)
+def init(x_dim: int, y_dim: int, u_sliding: float) -> Tuple[np.array, np.array]:
+    rho = np.ones(shape=(x_dim, y_dim))
+    u = np.zeros(shape=(2, x_dim, y_dim))
+    F = boltzmann.equilibrium(rho, u)
+
+    sliding_u = np.ones(shape=(2, x_dim)) * u_sliding
+    sliding_u[1] = 0
+
+    return F, sliding_u
+
+
+def main(params: Parameters) -> States:
+    F, sliding_u = init(params.x_dim, params.y_dim, params.sliding_u)
+
     states = States()
-
-    u = np.ones(shape=(2, params.x_dim)) * -0.1
-    u[1] = 0
-
     # plotter = plot.Plotter(continuous=True, timeout=0.001, vmax=1, vmin=0)
     for i in tqdm(range(params.iterations)):
+        boltzmann.collision(F)
+        boltzmann.slide_top(F, params.sliding_rho, sliding_u)
+        boltzmann.bounce_back(F, bot=True)
         boltzmann.stream(F)
-        util.apply_bounce_back(F, 1, u)
-        boltzmann.collision(F[:, :, 1:F.shape[2] - 2])
 
         states.add(F)
-        # plotter.velocity(F[:, :, 1:F.shape[2] - 2], step=i)
+        # plotter.velocity(F, step=i)
     return states
 
 
 if __name__ == '__main__':
-    params = Parameters(path="data/couette-flow")
-    states = run_couette_flow(params)
-
-    Saver.save(params.save_path(), states, params)
+    params = Parameters(
+        path="data/couette-flow",
+        x_dim=10,
+        y_dim=10,
+        sliding_u=-0.1,
+        sliding_rho=1
+    )
+    states = main(params)
 
     for i in [0, 500, 999]:
         plot.velocity_field_couette_flow(states, i, scale=1)
