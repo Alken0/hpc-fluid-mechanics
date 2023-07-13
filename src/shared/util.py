@@ -28,6 +28,8 @@ class Parameters:
     epsilon: float = 0.5
     sliding_rho: float = 1.0
     sliding_u: float = -0.1
+    pressure_in: float = 0.3
+    pressure_out: float = 0.03
     iterations: int = 1000
     time_stamp: datetime.datetime = datetime.datetime.now()  # other declarations do not work with reading from file
 

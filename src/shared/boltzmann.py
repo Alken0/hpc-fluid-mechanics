@@ -157,6 +157,44 @@ def analytic_solution(a0, t, L_z, omega=1) -> float:
     return solution
 
 
+def pressure(F: np.array, pressure_in: float, pressure_out: float):
+    """
+    applies pressure in x-direction to probability-density-function
+    :param F: np.array of shape (c,x+2,y+2) where "+2" means padding boundary of 1 on both sides
+    :return: None - modifies F itself
+    """
+
+    def field_at(index):
+        # helper function which returns the field at a given index and adds a needed dimension
+        field = F[:, index]
+        return np.expand_dims(field, 1)
+
+    n = F.shape[1] - 2  # - "boundary-left=1" - "one for len/index"
+
+    # calculate rho-in/out
+    pressure_array = np.ones(shape=(F.shape[1], F.shape[2]))
+    rho_in = pressure_array * pressure_in
+    rho_out = pressure_array * pressure_out
+
+    # get density/velocity/equilibrium of whole field for later calculations
+    u = velocity(F)
+    rho = density(F)
+    equi = equilibrium(rho, u)
+
+    # get needed columns of the previous field (expand to match dimensions)
+    equi_1 = np.expand_dims(equi[:, 1], 1)
+    equi_n = np.expand_dims(equi[:, n], 1)
+    u_1 = np.expand_dims(u[:, 1], 1)
+    u_n = np.expand_dims(u[:, n], 1)
+
+    # set F at location x_0
+    F_0 = equilibrium(rho_in, u_n) + (field_at(n) - equi_n)
+    F[:, 0] = F_0[:, 0]
+    # set F at location x_n+1
+    F_n1 = equilibrium(rho_out, u_1) + (field_at(1) - equi_1)
+    F[:, n + 1] = F_n1[:, n + 1]
+
+
 def bounce_back(F: np.array, top=False, bot=False, left=False, right=False):
     if top:
         # redirect top-right to bottom-right
