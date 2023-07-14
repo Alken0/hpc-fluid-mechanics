@@ -4,3 +4,6 @@ pdf:
 	# https://tex.stackexchange.com/questions/81968/sh-epspdf-command-not-found
 	cd report && pdflatex *.tex && bibtex *.aux && pdflatex *.tex && pdflatex *.tex
 	cd report && rm *.log *.aux *.out *.toc *.bbl *.blg
+
+tex-clean:
+	cd report && rm *.log *.aux *.out *.toc *.bbl *.blg

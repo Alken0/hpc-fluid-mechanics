@@ -2,6 +2,10 @@
 
 
 \section{Setup}
+This section deals with the topic of setting up this project and to navigate through it.
+It is intended to readers who want to run the experiments themselves or help to dig into the exact implementations.
+
+\subsection{Environement}
 This project was developed using pyenv and pip.
 Pyenv was selected due to its ability to create a virtual Python environment while still utilizing pip as the native package manager, distinguishing it from alternatives like anaconda.
 \newline
@@ -19,10 +23,39 @@ pip install -r requirements.txt
     \end{lstlisting}
 \end{center}
 
-
-\section{Code Structure}
-The project consists of three primary folders: src/shared, src/experiments, and tests.
-The tests folder contains code dedicated to programmatic validation of the implementations, primarily comprising unit tests.
-The src/shared folder contains code that is shared among all experiments conducted in the project.
+\subsection{Code Structure}
+The project consists of three primary folders: \textit{src/shared}, \textit{src/experiments}, and \textit{tests}.
+The \textit{tests} folder contains code dedicated to programmatic validation of the implementations, primarily comprising unit tests.
+The \textit{src/shared} folder contains code that is shared among all experiments conducted in the project.
 This includes implementations for streaming and collision in the lib file, among others.
-Lastly, the src/experiments folder contains experiment-specific code, including plotting functionalities tailored to each experiment.
+Lastly, the \textit{src/experiments} folder contains experiment-specific code, including plotting functionalities tailored to each experiment.
+
+
+\section{Probability Density Function}
+The probability density function is modelled as a \textit{numpy} array with 3 dimensions, namely: channels, x-direction and y-direction in this order.
+While the number of channels allways has to be exactly 9, the x and y dimensions may vary in size and are independent of each other.
+These constraints to the probability density function are assumed by all implemented functions and have to hold at all time.
+\newline
+
+The Probability density function follows the scheme described in \cref{sec:lattice-bolzmann-scheme}.
+While the grid in \cref{fig:bte-scheme} resembles the second and third dimension of the PDF, the channels can be imagined as a third dimension on the grid.
+Each channel resembles one direction of moving as shown in the left part of \cref{fig:bte-scheme}.
+The indices of the channels are in line with the indices of the arrows in the graphic.
+
+
+\section{Main Routine}
+The main routine may be seen as a function that is repeated until the experiment is over.
+It consists of several operators that stay the same in each experiment.
+For some experiments, not all operators are used or for example the \textit{bounce-back} is only applied to certain walls.
+\textbf{The order of the operators always stays the same and is crucial for a successive experiment}.
+All possible operators are listed below:
+\begin{enumerate}
+    \item collision - handles colliding particles in the simulation
+    \item slide - applies a steady velocity to on side
+    \item bounce back - bounces particles back into from certain walls
+    \item stream - moves all particles
+\end{enumerate}
+
+An interested reader may find the exact implementation in \textit{src/shared/boltzmann.py}.
+As it is redundant and maybe not inline with the exact implementation there won't be code examples at this point.
+However, it is to mention that all examples follow strictly the formulas explained in \cref{ch:methods}, so there is no special need in doing so.

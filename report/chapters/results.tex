@@ -1,1 +1,26 @@
 \chapter{Results}
+
+
+\section{Shear Wave Decay}
+The Shear Wave Decay is a common concept in computational physics to measure the kinematic viscosity of a fluid.
+It is setup by creating an initial sinusoidal velocity profile and measuring the decay rate.
+
+\subsection{Sinusodial Density}
+The initial condition is a given by the following equation where $L_x$ resembles the size in x-direction
+
+\begin{equation*}
+    \begin{aligned}
+        \mathbf{u}(\mathbf{r},0) &= 0 \\
+        \rho(\mathbf{r},0) &= \rho_0 + \epsilon \sin \left( \frac{2 \pi x}{L_x} \right) \cdot
+    \end{aligned}
+\end{equation*}
+
+\subsection{Sinusodial Velocity}
+The initial condition is a given by the following equation where $L_x$ resembles the size in x-direction
+
+\begin{equation*}
+    \begin{aligned}
+        u_x(\mathbf{r},0) &= \epsilon \sin \left( \frac{2 \pi x}{L_x} \right) \\
+        \rho(\mathbf{r},0) &= 1 \cdot
+    \end{aligned}
+\end{equation*}
