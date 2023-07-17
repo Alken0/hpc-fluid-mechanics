@@ -1,5 +1,3 @@
-from typing import Tuple, List
-
 import numpy as np
 from numpy import testing
 from tqdm import tqdm
@@ -43,44 +41,24 @@ def _check_conditions_velocity(F: np.array, x_dim: int, y_dim: int):
     assert F.shape[0] == 9, "incorrect number of channels"
 
 
-def plot_velocity_and_ideal_curve(states: States, params: Parameters, point: Tuple[int, int, int]):
-    L_z = states.get_states()[0].shape[2]
-    a_0 = params.epsilon
-    omega = params.omega
-    z = point[2]
-
-    ideals = [boltzmann.scaled_analytic_solution(a_0, t, z, L_z, omega) for t in range(states.get_num_states())]
-    velocities = [boltzmann.velocity(s)[point] for s in states.get_states()]
-
-    plot.velocity_against_ideal_over_time(velocities, ideals, point)
-
-
-def ideal_curve(states: States, params: Parameters) -> List[float]:
-    L_z = states.get_states()[0].shape[2]
-    a_0 = params.epsilon
-    omega = params.omega
-    z = params.point.y
-
-    return [
-        boltzmann.scaled_analytic_solution(a_0, t, z, L_z, omega)
-        for t in range(states.get_num_states())
-    ]
-
-
 if __name__ == '__main__':
-    params = Parameters(path="data/shear-wave-decay/velocity")
+    params = Parameters(
+        path="data/shear-wave-decay/velocity",
+        x_dim=100,
+        y_dim=100,
+        epsilon=0.5,
+        iterations=1000
+    )
     states = run_velocity(params)
 
-    Saver.save(params.save_path(), states, params)
+    Saver.save(params.path, states, params)
 
-    plot.velocity_at_x_column(states, 1, [0, 500, 999])
+    plot.velocity_at_x_column(states, 1, [0, 500, 999], path=params.path)
 
     scale = states[0].max()
-    print(f"using scale: {scale}")
-    plot.velocity_field(states, step=0, scale=scale)
-    plot.velocity_field(states, step=500, scale=scale)
-    plot.velocity_field(states, step=999, scale=scale)
+    plot.velocity_field(states, step=0, scale=scale, path=params.path)
+    plot.velocity_field(states, step=500, scale=scale, path=params.path)
+    plot.velocity_field(states, step=999, scale=scale, path=params.path)
 
-    plot.velocity_against_ideal_over_time(states, params, Point(0, 10, 10))
-    plot.velocity_aggregate_over_time(states)
-    plot.density_aggregate_over_time(states)
+    plot.velocity_against_ideal_over_time(states, params, Point(0, 10, 10), path=params.path)
+    plot.velocity_aggregate_over_time(states, path=params.path)

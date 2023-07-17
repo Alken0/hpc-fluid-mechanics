@@ -4,7 +4,7 @@
 \section{Shear Wave Decay}
 The Shear Wave Decay is a common concept in computational physics to measure the kinematic viscosity of a fluid.
 It is set up by creating an initial sinusoidal velocity profile and measuring the decay rate.
-All Shear Wave Decay experiments were run with the same parameters as shown in \cref{tab:swd-parameters}.
+The default parameters for the Shear Wave Decay experiments are shown in \cref{tab:swd-parameters} and used if not stated otherwise.
 
 \begin{table}[ht]
     \centering % used for centering table
@@ -77,12 +77,60 @@ The decay is shown through the plots in \cref{fig:swd-decay}.
 \end{center}
 
 \subsection{Sinusodial Velocity}
-The initial condition is a given by the following equation where $L_x$ resembles the size in x-direction and $\epsilon$ resembles the initial amplitude
+\textbf{This experiment ran with an epsilon of 0.5 to display the effect more drastically.}
+The initial condition is a given by the following equation where $L_y$ resembles the size in y-direction and $\epsilon$ resembles the initial amplitude
 
 \begin{equation*}
     \begin{aligned}
-        u_x(\mathbf{r},0) &= \epsilon \sin \left( \frac{2 \pi x}{L_x} \right) \\
+        u_x(\mathbf{r},0) &= \epsilon \sin \left( \frac{2 \pi x}{L_y} \right) \\
         \rho(\mathbf{r},0) &= 1 \cdot
     \end{aligned}
 \end{equation*}
+
+Because of the initial condition, the flow varies throughout the field.
+The equilibrium state is a state without a clearly directed movement as in the initial condition.
+So it is expected that the flow will decrease over time.
+
+\begin{figure}[h!]
+    \begin{minipage}{0.33\textwidth}
+        \includegraphics[width=\linewidth]{graphs/ShearWaveDecay/VelocityDistribution/velocity_field_0}
+    \end{minipage}% don't remove this comment - uncomments a new line
+    \begin{minipage}{0.33\textwidth}
+        \includegraphics[width=\linewidth]{graphs/ShearWaveDecay/VelocityDistribution/velocity_field_500}
+    \end{minipage}% don't remove this comment - uncomments a new line
+    \begin{minipage}{0.33\textwidth}
+        \includegraphics[width=\linewidth]{graphs/ShearWaveDecay/VelocityDistribution/velocity_field_999}
+    \end{minipage}
+    \caption{
+        Different flow states during the simulation.
+        From the sinusoid initial condition with a steady decrease till step 999.
+    }
+    \label{fig:swd-vs-velocity-fields}
+\end{figure}
+
+\Cref{fig:swd-vs-velocity-fields} gives a brief overview over the initial flow, and it's decaying over time.
+While at step 0, a strong sinusoid flow can be seen, at timestep 999 it decreased visibly.
+This decrease can be even further shown in \cref{fig:swd-vs-at-column_x} which shows the decay at a specific column.
+The decay rate is also in line with the theoretical solution (as seen in \cref{fig:swd-vs-ideal}) given by
+\begin{equation*}
+    \begin{aligned}
+        a_t &= a_0 e^{-vt \frac{2\pi}{L_y}^2}
+    \end{aligned}
+\end{equation*}
+
+\begin{center}
+    \begin{figure}[h!]
+        \begin{minipage}{0.5\textwidth}
+            \includegraphics[width=\linewidth]{graphs/ShearWaveDecay/VelocityDistribution/velocity_at_column_x}
+            \caption{Decaying velocity at a specific column.}
+            \label{fig:swd-vs-at-column_x}
+        \end{minipage}% don't remove this comment - uncomments a new line
+        \begin{minipage}{0.5\textwidth}
+            \includegraphics[width=\linewidth]{graphs/ShearWaveDecay/VelocityDistribution/velocity_against_ideal}
+            \caption{measured vs ideal decay}
+            \label{fig:swd-vs-ideal}
+        \end{minipage}
+
+    \end{figure}
+\end{center}
 

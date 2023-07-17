@@ -132,14 +132,15 @@ def density_aggregate_over_time(states: States, path: Optional[str] = None):
     plt.plot(iterations, min_densities, label="min")
 
     plt.legend()
+    plt.tight_layout()
     if path is None:
         plt.show()
     else:
         save_fig(fig, path, "density_aggregate_over_time")
 
 
-def velocity_at_x_column(states: States, col: int, steps: List[int]):
-    plt.figure()
+def velocity_at_x_column(states: States, col: int, steps: List[int], path: Optional[str] = None):
+    fig = plt.figure(dpi=DPI)
     plt.title(f'Velocity in Time for Column x={col} ')
     plt.xlabel('Y')
     plt.ylabel('Velocity')
@@ -154,7 +155,11 @@ def velocity_at_x_column(states: States, col: int, steps: List[int]):
         plt.plot(y, column, label=f"velocity @{step}")
 
     plt.legend()
-    plt.show()
+    plt.tight_layout()
+    if path is None:
+        plt.show()
+    else:
+        save_fig(fig, path, "velocity_at_column_x")
 
 
 def velocity_aggregate_over_time(states: States, path: Optional[str] = None):
@@ -175,6 +180,7 @@ def velocity_aggregate_over_time(states: States, path: Optional[str] = None):
     plt.plot(iterations, min_velocities, label="min")
 
     plt.legend()
+    plt.tight_layout()
     if path is None:
         plt.show()
     else:
@@ -203,6 +209,7 @@ def velocity_field(states: States, step: int, scale: float = 0.06, path: Optiona
     plt.ylabel('Y')
     data = np.swapaxes(boltzmann.velocity(states[step]), 1, 2)
     plt.quiver(data[0], data[1], angles='xy', scale_units='xy', scale=scale)
+    plt.tight_layout()
     if path is None:
         plt.show()
     else:
@@ -260,8 +267,8 @@ def density_over_time_at(states: list[np.array], point=(0, 0)):
     plt.show()
 
 
-def velocity_against_ideal_over_time(states: States, params: Parameters, point: Point):
-    plt.figure()
+def velocity_against_ideal_over_time(states: States, params: Parameters, point: Point, path: Optional[str] = None):
+    fig = plt.figure(dpi=DPI)
     plt.title(f'Velocity over time at position {point.to_tuple()}')
     plt.xlabel('Time')
     plt.ylabel('Velocity')
@@ -279,8 +286,11 @@ def velocity_against_ideal_over_time(states: States, params: Parameters, point: 
     plt.plot(iterations, np.array(ideals), label="ideal")
 
     plt.legend()
-    plt.ioff()
-    plt.show()
+    plt.tight_layout()
+    if path is None:
+        plt.show()
+    else:
+        save_fig(fig, path, "velocity_against_ideal")
 
 
 def print_velocity(F, axis: int) -> None:
