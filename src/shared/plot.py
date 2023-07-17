@@ -140,7 +140,49 @@ def density_aggregate_over_time(states: States, path: Optional[str] = None):
         save_fig(fig, path, "density_aggregate_over_time")
 
 
-def velocity_at_x_column(states: States, col: int, steps: List[int], path: Optional[str] = None):
+def velocity_for_step_at_columns(states: States, columns: List[int], analytical_solution, step: int,
+                                 path: Optional[str] = None):
+    fig = plt.figure(dpi=DPI)
+    plt.title(f'Velocity at timestep {step}')
+    plt.xlabel('Y')
+    plt.ylabel('Velocity')
+
+    velocity = boltzmann.velocity(states[step])
+    y = range(velocity.shape[2])
+
+    for col in columns:
+        column = velocity[0, col, :]
+        plt.plot(y, column, label=f"column {col}")
+    # plt.plot(y, analytical_solution, label="analytical solution")
+
+    plt.legend()
+    plt.tight_layout()
+    if path is None:
+        plt.show()
+    else:
+        save_fig(fig, path, f"velocity_at_columns_for_step_{step}")
+
+
+def density_at_column_x(states: States, col: int, steps: List[int], path: Optional[str] = None):
+    fig = plt.figure(dpi=DPI)
+    plt.title(f'Density in Time for Column y={col} ')
+    plt.xlabel('Y')
+    plt.ylabel('Density')
+
+    y = range(states[0].shape[2])
+    for step in steps:
+        column = boltzmann.density(states[step])[:, col]
+        plt.plot(y, column, label=f"density @{step}")
+
+    plt.legend()
+    plt.tight_layout()
+    if path is None:
+        plt.show()
+    else:
+        save_fig(fig, path, f"density_at_column_x")
+
+
+def velocity_at_column(states: States, col: int, steps: List[int], path: Optional[str] = None):
     fig = plt.figure(dpi=DPI)
     plt.title(f'Velocity in Time for Column x={col} ')
     plt.xlabel('Y')
@@ -203,7 +245,7 @@ def velocity_over_time_at(states: States, point: Point):
     plt.show()
 
 
-def velocity_field(states: States, step: int, scale: float = 0.06, path: Optional[str] = None):
+def velocity_field(states: States, step: int, scale: Optional[float] = None, path: Optional[str] = None):
     fig = plt.figure(dpi=DPI)
     plt.title(f'Velocity Field @{step}')
     plt.xlabel('X')

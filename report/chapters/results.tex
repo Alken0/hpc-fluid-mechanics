@@ -217,3 +217,56 @@ To reproduce this experiment, please use the parameters from \cref{tab:cf-parame
     \caption{Parameters for the Couette Flow} % title of Table
     \label{tab:cf-parameters}
 \end{table}
+
+
+\section{Poiseuille Flow}
+The \textit{Poiseuille Flow} can be described as a pressure pipe.
+There are stationary boundaries at the top and bottom and a periodic boundary condition to the sides.
+In the beginning all velocity is set to 0 as defined by the initial condition
+\begin{equation*}
+    \begin{aligned}
+        \rho(0) &= 1.0 \\
+        \mathbf{u}(0) &= 0 \cdot
+    \end{aligned}
+\end{equation*}
+
+Because of the pressure, a flow starts from one side to the other and maxes out at a certain speed given by the pressure.
+The resulting velocity field is shown in \cref{fig:pf-velocity-field}.
+\begin{figure}[h!]
+    \begin{center}
+        \includegraphics[width=0.5\linewidth]{graphs/PoiseuilleFlow/velocity_field_50}
+        \caption{The steady state of the Poiseuille Flow.}
+        \label{fig:pf-velocity-field}
+    \end{center}
+\end{figure}
+
+The velocity field inside the pipe changes as shown in \cref{fig:pf-velocity-areas}.
+It can be clearly seen, that the amount of viscosity is first higher at the start of the pipe, near the pressure difference.
+While the experiment continuous, the velocity adjusts throughout further in the pipe until it is the same.
+
+
+\begin{figure}[h!]
+    \begin{minipage}{0.33\textwidth}
+        \includegraphics[width=\linewidth]{graphs/PoiseuilleFlow/velocity_at_columns_for_step_0}
+    \end{minipage}% don't remove this comment - uncomments a new line
+    \begin{minipage}{0.33\textwidth}
+        \includegraphics[width=\linewidth]{graphs/PoiseuilleFlow/velocity_at_columns_for_step_10}
+    \end{minipage}% don't remove this comment - uncomments a new line
+    \begin{minipage}{0.33\textwidth}
+        \includegraphics[width=\linewidth]{graphs/PoiseuilleFlow/velocity_at_columns_for_step_50}
+    \end{minipage}
+    \caption{
+        Different flow states during the simulation.
+    }
+    \label{fig:pf-velocity-areas}
+\end{figure}
+
+The density in the center column at $\rho\left( x, \frac{L_y}{2} \right)$ is visualized in \cref{fig:pf-density}.
+\begin{figure}[h!]
+    \begin{center}
+        \includegraphics[width=0.5\linewidth]{graphs/PoiseuilleFlow/density_at_column_x}
+        \caption{Density along the center of the Pipe.}
+        \label{fig:pf-density}
+    \end{center}
+\end{figure}
+

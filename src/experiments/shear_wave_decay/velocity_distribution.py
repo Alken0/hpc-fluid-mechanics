@@ -54,7 +54,7 @@ if __name__ == '__main__':
 
     Saver.save(params.path, states, params)
 
-    plot.velocity_at_x_column(states, 1, [0, 500, 999], path=params.path)
+    plot.velocity_at_column(states, 1, [0, 500, 999], path=params.path)
 
     scale = states[0].max()
     plot.velocity_field(states, step=0, scale=scale, path=params.path)
