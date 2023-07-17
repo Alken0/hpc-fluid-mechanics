@@ -7,11 +7,11 @@ from src.shared.util import States, Parameters, Saver
 
 
 def run_density(params: Parameters) -> States:
-    F = init_with_sinus_on_density(params.x_dim, params.y_dim)
+    F = init_with_sinus_on_density(params.x_dim, params.y_dim, epsilon=params.epsilon)
     states = States()
     for t in tqdm(range(params.iterations)):
         boltzmann.stream(F)
-        boltzmann.collision(F, omega=1)
+        boltzmann.collision(F, omega=params.omega)
         states.add(F)
     Saver.save(params.path, states, params)
     return states
@@ -41,15 +41,22 @@ def _check_conditions_density(F: np.array, x_dim: int, y_dim: int):
 
 
 if __name__ == '__main__':
-    params = Parameters(path="data/shear-wave-decay/density")
-    states = run_density(params)
+    params = Parameters(
+        path="data/shear-wave-decay/density",
+        x_dim=100,
+        y_dim=100,
+        epsilon=0.01,
+        iterations=1000
+    )
+    # states = run_density(params)
+    states, params = Saver.load(params.path)
 
-    Saver.save(params.save_path(), states, params)
+    # Saver.save(params.path, states, params)
 
-    plot.density_heatmap(states, step=0)
-    plot.density_aggregate_over_time(states)
-    plot.velocity_aggregate_over_time(states)
+    # plot.density_heatmap(states, step=0)
+    plot.density_aggregate_over_time(states, path=params.path)
+    plot.velocity_aggregate_over_time(states, path=params.path)
 
-    plot.velocity_field(states, step=41, scale=0.06)
-    plot.velocity_field(states, step=85, scale=0.06)
-    plot.velocity_field(states, step=127, scale=0.06)
+    plot.stream_field(states, step=41, scale=0.06, path=params.path)
+    plot.stream_field(states, step=85, scale=0.06, path=params.path)
+    plot.stream_field(states, step=127, scale=0.06, path=params.path)

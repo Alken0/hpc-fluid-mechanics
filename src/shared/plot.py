@@ -6,6 +6,8 @@ import numpy as np
 from src.shared import boltzmann
 from src.shared.util import States, Parameters, Point
 
+DPI = 400
+
 
 class Plotter:
     def __init__(self, continuous=False, timeout=1, vmin=None, vmax=None):
@@ -58,7 +60,7 @@ class Plotter:
         self._show()
 
     def stream(self, F: np.array, step: int, path: Optional[str] = None):
-        fig = plt.figure(dpi=200)
+        fig = plt.figure(dpi=DPI)
         plt.title(f'Stream Function' if step is None else f'Stream Function @{step}')
         plt.xlabel('X')
         plt.ylabel('Y')
@@ -68,9 +70,7 @@ class Plotter:
         if path is None:
             self._show()
         else:
-            fig.savefig(f'{path}/fig_{step}.jpg', dpi=fig.dpi)
-            plt.clf()
-            plt.close(fig)
+            save_fig(fig, path, f"fig_{step}")
 
 
 def print_pdf(F: np.array):
@@ -114,8 +114,8 @@ def density_heatmap(states: States, step: int):
     plt.show()
 
 
-def density_aggregate_over_time(states: States):
-    plt.figure()
+def density_aggregate_over_time(states: States, path: Optional[str] = None):
+    fig = plt.figure(dpi=DPI)
     plt.title(f'Density Over Time')
     plt.xlabel('Time')
     plt.ylabel('Density')
@@ -132,7 +132,10 @@ def density_aggregate_over_time(states: States):
     plt.plot(iterations, min_densities, label="min")
 
     plt.legend()
-    plt.show()
+    if path is None:
+        plt.show()
+    else:
+        save_fig(fig, path, "density_aggregate_over_time")
 
 
 def velocity_at_x_column(states: States, col: int, steps: List[int]):
@@ -154,8 +157,8 @@ def velocity_at_x_column(states: States, col: int, steps: List[int]):
     plt.show()
 
 
-def velocity_aggregate_over_time(states: States):
-    plt.figure()
+def velocity_aggregate_over_time(states: States, path: Optional[str] = None):
+    fig = plt.figure(dpi=DPI)
     plt.title(f'Velocity Over Time')
     plt.xlabel('Time')
     plt.ylabel('Velocity')
@@ -172,7 +175,10 @@ def velocity_aggregate_over_time(states: States):
     plt.plot(iterations, min_velocities, label="min")
 
     plt.legend()
-    plt.show()
+    if path is None:
+        plt.show()
+    else:
+        save_fig(fig, path, "velocity_aggregate_over_time")
 
 
 def velocity_over_time_at(states: States, point: Point):
@@ -190,14 +196,31 @@ def velocity_over_time_at(states: States, point: Point):
     plt.show()
 
 
-def velocity_field(states: States, step: int, scale: float = 0.06):
-    plt.figure()
-    plt.title(f'Velocity Function @{step}')
+def velocity_field(states: States, step: int, scale: float = 0.06, path: Optional[str] = None):
+    fig = plt.figure(dpi=DPI)
+    plt.title(f'Velocity Field @{step}')
     plt.xlabel('X')
     plt.ylabel('Y')
     data = np.swapaxes(boltzmann.velocity(states[step]), 1, 2)
     plt.quiver(data[0], data[1], angles='xy', scale_units='xy', scale=scale)
-    plt.show()
+    if path is None:
+        plt.show()
+    else:
+        save_fig(fig, path, f"velocity_field_{step}")
+
+
+def stream_field(states: States, step: int, scale: float = 0.06, path: Optional[str] = None):
+    fig = plt.figure(dpi=DPI)
+    plt.title(f'Stream Field @{step}')
+    plt.xlabel('X')
+    plt.ylabel('Y')
+    x, y = np.meshgrid(np.arange(states[step].shape[1]), np.arange(states[step].shape[2]))
+    u, v = np.swapaxes(boltzmann.velocity(states[step]), 1, 2)
+    plt.streamplot(x, y, u, v)
+    if path is None:
+        plt.show()
+    else:
+        save_fig(fig, path, f"stream_field_{step}")
 
 
 def velocity_field_couette_flow(states: States, step: int, scale: float = 1.0):
@@ -272,3 +295,9 @@ def print_velocity(F, axis: int) -> None:
             output += f" {velocity[axis][x][y]:.2f}" if y != 0 else f"{velocity[axis][x][y]:.2f}"
         print(output)
     print()
+
+
+def save_fig(fig: plt.Figure, path: str, name: str):
+    fig.savefig(f'{path}/{name}.jpg', dpi=fig.dpi)
+    plt.clf()
+    plt.close(fig)

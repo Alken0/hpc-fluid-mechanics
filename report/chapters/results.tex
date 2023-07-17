@@ -3,7 +3,25 @@
 
 \section{Shear Wave Decay}
 The Shear Wave Decay is a common concept in computational physics to measure the kinematic viscosity of a fluid.
-It is setup by creating an initial sinusoidal velocity profile and measuring the decay rate.
+It is set up by creating an initial sinusoidal velocity profile and measuring the decay rate.
+All Shear Wave Decay experiments were run with the same parameters as shown in \cref{tab:swd-parameters}.
+
+\begin{table}[ht]
+    \centering % used for centering table
+    \begin{tabular}{c c}
+% centered columns (4 columns)
+        \hline\hline %inserts double horizontal lines
+        Parameter  & Value \\ [0.5ex] % inserts table heading
+        \hline % inserts single horizontal line
+        $L_x$      & 100   \\
+        $L_y$      & 100   \\
+        $\epsilon$ & 0.01  \\
+        $t_{\max}$ & 1000  \\ [1ex] % [1ex] adds vertical space
+        \hline %inserts single line
+    \end{tabular}
+    \caption{Parameters for the Shear Wave Decay} % title of Table
+    \label{tab:swd-parameters}
+\end{table}
 
 \subsection{Sinusodial Density}
 The initial condition is a given by the following equation where $L_x$ resembles the size in x-direction
@@ -15,8 +33,51 @@ The initial condition is a given by the following equation where $L_x$ resembles
     \end{aligned}
 \end{equation*}
 
+Because of the initialization the fluid is shaped like a sinusoid wave without any velocity.
+It is expected that this wave collapses in itself.
+This is due to the fact that the system tries to reach a state of equilibrium where the mass at each position is the same.
+Therefore, a flow is created from the higher density area to the lower density area.
+This flow continues until the mass at the previous lower density area is so dense, that no further flow is created. %TODO better explaining why it overflows!
+It now reached a state similar to the beginning however the dense and low-dense areas swapped which is why the flow will have opposite directions in the next iteration.
+This process can be seen in \cref{fig:swd-stream-velocity}. % TODO fix formatting (text-image-text-image)
+
+\begin{figure}[h!]
+    \begin{minipage}{0.33\textwidth}
+        \includegraphics[width=\linewidth]{graphs/ShearWaveDecay/DensityDistribution/stream_field_41}
+    \end{minipage}% don't remove this comment - uncomments a new line
+    \begin{minipage}{0.33\textwidth}
+        \includegraphics[width=\linewidth]{graphs/ShearWaveDecay/DensityDistribution/velocity_field_85}
+    \end{minipage}% don't remove this comment - uncomments a new line
+    \begin{minipage}{0.33\textwidth}
+        \includegraphics[width=\linewidth]{graphs/ShearWaveDecay/DensityDistribution/stream_field_127}
+    \end{minipage}
+    \caption{
+        Different flow states during the simulation.
+        From piling up at step 41 to a steady state at step 85 to the opposite flow at step 127.
+    }
+    \label{fig:swd-stream-velocity}
+\end{figure}
+
+This flow won't hold forever as the newly forming dense areas are always less dense as the once from the previous iteration.
+The system tries to reach an equilibrium.
+Over time the piles are shallower and shallower until it reaches the desired equilibrium function with the same density at all positions.
+The decay is shown through the plots in \cref{fig:swd-decay}.
+
+\begin{center}
+    \begin{figure}[h!]
+        \begin{minipage}{0.5\textwidth}
+            \includegraphics[width=\linewidth]{graphs/ShearWaveDecay/DensityDistribution/density_aggregate_over_time.jpg}
+        \end{minipage}% don't remove this comment - uncomments a new line
+        \begin{minipage}{0.5\textwidth}
+            \includegraphics[width=\linewidth]{graphs/ShearWaveDecay/DensityDistribution/velocity_aggregate_over_time.jpg}
+        \end{minipage}
+        \caption{Decaying density and velocity over time.}
+        \label{fig:swd-decay}
+    \end{figure}
+\end{center}
+
 \subsection{Sinusodial Velocity}
-The initial condition is a given by the following equation where $L_x$ resembles the size in x-direction
+The initial condition is a given by the following equation where $L_x$ resembles the size in x-direction and $\epsilon$ resembles the initial amplitude
 
 \begin{equation*}
     \begin{aligned}
@@ -24,3 +85,4 @@ The initial condition is a given by the following equation where $L_x$ resembles
         \rho(\mathbf{r},0) &= 1 \cdot
     \end{aligned}
 \end{equation*}
+
