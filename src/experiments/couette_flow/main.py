@@ -18,13 +18,13 @@ def init(x_dim: int, y_dim: int, u_sliding: float) -> Tuple[np.array, np.array]:
     return F, sliding_u
 
 
-def main(params: Parameters) -> States:
+def run_couette_flow(params: Parameters) -> States:
     F, sliding_u = init(params.x_dim, params.y_dim, params.sliding_u)
 
     states = States()
     # plotter = plot.Plotter(continuous=True, timeout=0.001, vmax=1, vmin=0)
     for i in tqdm(range(params.iterations)):
-        boltzmann.collision(F)
+        boltzmann.collision(F, omega=params.omega)
         boltzmann.slide_top(F, params.sliding_rho, sliding_u)
         boltzmann.bounce_back(F, bot=True)
         boltzmann.stream(F)
@@ -36,13 +36,15 @@ def main(params: Parameters) -> States:
 
 if __name__ == '__main__':
     params = Parameters(
-        path="data/couette-flow",
+        path="data/couette_flow",
         x_dim=10,
         y_dim=10,
+        omega=1.0,
         sliding_u=-0.1,
-        sliding_rho=1
+        sliding_rho=1,
+        iterations=1000
     )
-    states = main(params)
+    states = run_couette_flow(params)
 
-    for i in [0, 500, 999]:
-        plot.velocity_field_couette_flow(states, i, scale=1)
+    for i in [0, 10, 50, 100, 999]:
+        plot.velocity_field_couette_flow(states, i, scale=1, path=params.path)

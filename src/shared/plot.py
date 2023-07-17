@@ -1,3 +1,4 @@
+from pathlib import Path
 from typing import Optional, List
 
 import matplotlib.pyplot as plt
@@ -230,8 +231,8 @@ def stream_field(states: States, step: int, scale: float = 0.06, path: Optional[
         save_fig(fig, path, f"stream_field_{step}")
 
 
-def velocity_field_couette_flow(states: States, step: int, scale: float = 1.0):
-    plt.figure()
+def velocity_field_couette_flow(states: States, step: int, scale: float = 1.0, path: Optional[str] = None):
+    fig = plt.figure(dpi=DPI)
     plt.title(f'Velocity Field @{step}')
     plt.xlabel('X')
     plt.ylabel('Y')
@@ -239,7 +240,7 @@ def velocity_field_couette_flow(states: States, step: int, scale: float = 1.0):
     # plot velocities
     velocities = boltzmann.velocity(states[step][:, :, 1:states[step].shape[2] - 2])
     data = np.swapaxes(velocities, 1, 2)
-    plt.quiver(data[0,], data[1], angles='xy', scale_units='xy', scale=scale)
+    plt.quiver(data[0], data[1], angles='xy', scale_units='xy', scale=scale)
 
     # plot boundaries exactly inbetween artificial boundary and shown points
     y = range(states[step].shape[1])
@@ -249,7 +250,11 @@ def velocity_field_couette_flow(states: States, step: int, scale: float = 1.0):
     plt.plot(y, lower_boundary, label="lower (static) boundary")
 
     plt.legend()
-    plt.show()
+    plt.tight_layout()
+    if path is None:
+        plt.show()
+    else:
+        save_fig(fig, path, f"velocity_field_couette_flow_{step}")
 
 
 def density_over_time_at(states: list[np.array], point=(0, 0)):
@@ -323,6 +328,7 @@ def print_velocity(F, axis: int) -> None:
 
 
 def save_fig(fig: plt.Figure, path: str, name: str):
+    Path(path).mkdir(parents=True, exist_ok=True)
     fig.savefig(f'{path}/{name}.jpg', dpi=fig.dpi)
     plt.clf()
     plt.close(fig)

@@ -49,7 +49,7 @@ def velocity(F: np.array) -> np.array:
     return (1 / density(F)) * np.einsum('ai, ixy->axy', c, F)
 
 
-def collision(F: np.array, omega=1) -> None:
+def collision(F: np.array, omega) -> None:
     """
     Applies collision to F using, where :math:`F_eq` is computed by the function `equilibrium`:
 

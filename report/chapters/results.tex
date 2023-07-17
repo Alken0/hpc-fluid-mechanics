@@ -4,7 +4,7 @@
 \section{Shear Wave Decay}
 The Shear Wave Decay is a common concept in computational physics to measure the kinematic viscosity of a fluid.
 It is set up by creating an initial sinusoidal velocity profile and measuring the decay rate.
-The field is set up without any borders, which results in e.g.\ particles moving out of the right to appear back on the left side.
+The field is set up with a periodic boundary condition on each side, which results in e.g.\ particles moving out of the right to appear back on the left side.
 The default parameters for the Shear Wave Decay experiments are shown in \cref{tab:swd-parameters} and used if not stated otherwise.
 
 \begin{table}[ht]
@@ -154,3 +154,66 @@ The results of the experiment are shown in \cref{fig:swd-vo-viscosity-vs-omega}.
 Strangely, for very small omega, the viscosity does not follow the otherwise exponential decay.
 This is due to the model of the simulation, that fails to replicate the exact behaviour with too large or small values. % TODO why?
 In theory, this may even have an impact on the experiments, but omega was set to 1.0 to not have a negative impact of this phenomenon.
+
+
+\section{Couette Flow}
+The \textit{Couette Flow} arises in a bounded field with two distinct boundaries located at the top and bottom.
+Notably, the lower boundary remains stationary, while the upper boundary is sliding in x-direction.
+Periodic boundary conditions are enforced along the right and left sides.
+The initial condition, depicted in \cref{fig:cf-initial-condition} and can be mathematically expressed as follows:
+\begin{equation*}
+    \begin{aligned}
+        \rho(0) = 0 \\
+        \mathbf{u}(0) = 0 \cdot
+    \end{aligned}
+\end{equation*}
+
+\begin{figure}[h!]
+    \begin{center}
+        \includegraphics[width=0.5\linewidth]{graphs/CouetteFlow/velocity_field_couette_flow_0}
+        \caption{Initial condition with a sliding boundary at the top, periodic boundary conditions to the side and a hard wall to the bottom.}
+        \label{fig:cf-initial-condition}
+    \end{center}
+\end{figure}
+
+Because of the friction of the boundaries, the fluid starts flow.
+More specifically, the fluid in the top starts to get momentum, because it is close to the upper boundary which is moving.
+This flow then spreads further down.
+But because the wall at the bottom is steady, the flow gets less the further it deepens.
+This process can be seen in the following two graphs in \cref{fig:cf-velocity-field-over-time}.
+
+
+\begin{center}
+    \begin{figure}[h!]
+        \begin{minipage}{0.5\textwidth}
+            \includegraphics[width=\linewidth]{graphs/CouetteFlow/velocity_field_couette_flow_50}
+        \end{minipage}% don't remove this comment - uncomments a new line
+        \begin{minipage}{0.5\textwidth}
+            \includegraphics[width=\linewidth]{graphs/CouetteFlow/velocity_field_couette_flow_999}
+        \end{minipage}
+        \caption{Velocity field of Couette Flow over time.}
+        \label{fig:cf-velocity-field-over-time}
+    \end{figure}
+\end{center}
+
+To reproduce this experiment, please use the parameters from \cref{tab:cf-parameters}.
+
+\begin{table}[ht]
+    \centering % used for centering table
+    \begin{tabular}{c c}
+% centered columns (4 columns)
+        \hline\hline %inserts double horizontal lines
+        Parameter   & Value \\ [0.5ex] % inserts table heading
+        \hline % inserts single horizontal line
+        $L_x$       & 10    \\
+        $L_y$       & 10    \\
+        $\omega$    & 1.0   \\
+        $\epsilon$  & 0.01  \\
+        sliding u   & -0.1  \\
+        sliding rho & 1     \\
+        $t_{\max}$  & 1000  \\ [1ex] % [1ex] adds vertical space
+        \hline %inserts single line
+    \end{tabular}
+    \caption{Parameters for the Couette Flow} % title of Table
+    \label{tab:cf-parameters}
+\end{table}
