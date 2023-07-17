@@ -22,19 +22,27 @@ class Point:
 @dataclass
 class Parameters:
     path: str
+    """used for saving"""
     x_dim: int = 100
     y_dim: int = 100
     omega: float = 1.0
+    """used for collision"""
+    omega_min: int = 0
+    """used in correlation viscosity omega"""
+    omega_max: int = 2
+    """used in correlation viscosity omega"""
+    omega_step: float = 0.1
+    """used in correlation viscosity omega"""
     epsilon: float = 0.5
+    """used in shear wave decay"""
     sliding_rho: float = 1.0
     sliding_u: float = -0.1
     pressure_in: float = 0.3
+    """used in poiseuille flow"""
     pressure_out: float = 0.03
+    """used in poiseuille flow"""
     iterations: int = 1000
     time_stamp: datetime.datetime = datetime.datetime.now()  # other declarations do not work with reading from file
-
-    def save_path(self):
-        return f"{self.path}/{self.time_stamp.isoformat()}"
 
 
 class States:

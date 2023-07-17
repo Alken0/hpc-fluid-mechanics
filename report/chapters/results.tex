@@ -4,6 +4,7 @@
 \section{Shear Wave Decay}
 The Shear Wave Decay is a common concept in computational physics to measure the kinematic viscosity of a fluid.
 It is set up by creating an initial sinusoidal velocity profile and measuring the decay rate.
+The field is set up without any borders, which results in e.g.\ particles moving out of the right to appear back on the left side.
 The default parameters for the Shear Wave Decay experiments are shown in \cref{tab:swd-parameters} and used if not stated otherwise.
 
 \begin{table}[ht]
@@ -15,6 +16,7 @@ The default parameters for the Shear Wave Decay experiments are shown in \cref{t
         \hline % inserts single horizontal line
         $L_x$      & 100   \\
         $L_y$      & 100   \\
+        $\omega$   & 1.0   \\
         $\epsilon$ & 0.01  \\
         $t_{\max}$ & 1000  \\ [1ex] % [1ex] adds vertical space
         \hline %inserts single line
@@ -76,7 +78,7 @@ The decay is shown through the plots in \cref{fig:swd-decay}.
     \end{figure}
 \end{center}
 
-\subsection{Sinusodial Velocity}
+\subsection{Sinusoidal Velocity}\label{subsec:sinusoidal-velocity}
 \textbf{This experiment ran with an epsilon of 0.5 to display the effect more drastically.}
 The initial condition is a given by the following equation where $L_y$ resembles the size in y-direction and $\epsilon$ resembles the initial amplitude
 
@@ -130,23 +132,25 @@ The decay rate is also in line with the theoretical solution (as seen in \cref{f
             \caption{measured vs ideal decay}
             \label{fig:swd-vs-ideal}
         \end{minipage}
-
     \end{figure}
 \end{center}
 
-
 \subsection{Correlation of Kinematic Viscosity and Omega}
-We know that the
-\begin{equation}
-    \frac{\partial \ypsilon}{\partial t} = \ny \Delta^2 \ypsilon
+% TODO in methods: equation to calculate viscosity from experiment
+This experiment aims to measure the correlation between the kinematic viscosity and the parameter omega, that is used for the collision.
+The kinematic viscosity describes, how \textit{thick} some fluid is, e.g.\ syrup has a higher viscosity than water. % https://en.wikipedia.org/wiki/Viscosity
+This experiment measures the viscosity by running the previous experiment \cref{subsec:sinusoidal-velocity} multiple times with different omegas.
+It is expected that a lower omega has a higher viscosity. % TODO why?
+The results of the experiment are shown in \cref{fig:swd-vo-viscosity-vs-omega}.
 
-\end{equation}
+\begin{figure}[h!]
+    \begin{center}
+        \includegraphics[width=0.5\linewidth]{graphs/ShearWaveDecay/Viscosity/viscosity_against_omega}
+        \caption{Correlation between the kinematic viscosity and omega.}
+        \label{fig:swd-vo-viscosity-vs-omega}
+    \end{center}
+\end{figure}
 
-\begin{equation}
-    u(y, 0) = a * \\sin(2 y \\pi / N_y) \\
-    k = \\sin(2 y \\pi / N_y) \\
-    a = -νk²a \\
-    a(t) = a_0 * e^{-νk²t} \\
-    ν = (\\ln(a_0) - \\ln(a(t))) / (k² * t)
-    \label{eq:viscosity_for_amplitude}
-\end{equation}
+Strangely, for very small omega, the viscosity does not follow the otherwise exponential decay.
+This is due to the model of the simulation, that fails to replicate the exact behaviour with too large or small values. % TODO why?
+In theory, this may even have an impact on the experiments, but omega was set to 1.0 to not have a negative impact of this phenomenon.

@@ -293,6 +293,21 @@ def velocity_against_ideal_over_time(states: States, params: Parameters, point: 
         save_fig(fig, path, "velocity_against_ideal")
 
 
+def viscosity_against_omega(viscosities: List[float], omegas: List[float], point: Point, path: Optional[str] = None):
+    fig = plt.figure(dpi=DPI)
+    plt.title(f"Viscosity against Omega @{point.to_tuple()}")
+    plt.xlabel('Omega')
+    plt.ylabel('Viscosity')
+
+    plt.plot(omegas, viscosities)
+
+    plt.tight_layout()
+    if path is None:
+        plt.show()
+    else:
+        save_fig(fig, path, "viscosity_against_omega")
+
+
 def print_velocity(F, axis: int) -> None:
     """
         prints the velocity of the probability density function (F) to the terminal

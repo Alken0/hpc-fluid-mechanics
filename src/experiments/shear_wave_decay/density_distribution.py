@@ -46,6 +46,7 @@ if __name__ == '__main__':
         x_dim=100,
         y_dim=100,
         epsilon=0.01,
+        omega=1.0,
         iterations=1000
     )
     # states = run_density(params)
