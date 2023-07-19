@@ -157,7 +157,7 @@ def analytic_solution(a0, t, L_z, omega=1) -> float:
     return solution
 
 
-def pressure(F: np.array, pressure_in: float, pressure_out: float):
+def pressure(F: np.array, pressure_in: float, pressure_out: float) -> None:
     """
     applies pressure in x-direction to probability-density-function
     :param F: np.array of shape (c,x+2,y+2) where "+2" means padding boundary of 1 on both sides
@@ -195,38 +195,56 @@ def pressure(F: np.array, pressure_in: float, pressure_out: float):
     F[:, n + 1] = F_n1[:, n + 1]
 
 
-def bounce_back(F: np.array, top=False, bot=False, left=False, right=False):
+def bounce_back(F: np.array, F_star: np.array, top=False, bot=False, left=False, right=False) -> None:
+    """
+    applies the "bounce back" or "rigid wall" to specified walls
+    this function needs to run after the streaming step because it requires information from before and after the streaming
+
+    :param F: probability density function of shape (c,x,y) with c=9 AFTER streaming
+    :param F_star: probability density function of shape (c,x,y) with c=9 BEFORE streaming
+    :param top: applies boundary to the top
+    :param bot: applies boundary to the bottom
+    :param left: applies boundary to the left
+    :param right: applies boundary to the right
+    """
     if top:
         # redirect top-right to bottom-right
-        F[7, :, -1] = np.roll(F[5, :, -1], -1)
+        F[7, :, -1] = F_star[5, :, -1]
         # redirect top-left to bottom-left
-        F[8, :, -1] = np.roll(F[6, :, -1], 1)
+        F[8, :, -1] = F_star[6, :, -1]
         # redirect top to bottom
-        F[4, :, -1] = F[2, :, -1]
+        F[4, :, -1] = F_star[2, :, -1]
     if bot:
         # redirect bottom-right to top-right
-        F[6, :, 0] = np.roll(F[8, :, 0], -1)
+        F[6, :, 0] = F_star[8, :, 0]
         # redirect bottom-left to top-left
-        F[5, :, 0] = np.roll(F[7, :, 0], 1)
+        F[5, :, 0] = F_star[7, :, 0]
         # redirect bottom to top
-        F[2, :, 0] = F[4, :, 0]
+        F[2, :, 0] = F_star[4, :, 0]
     if left:
         # redirect bottom-left to bottom-right
-        F[5, 0, :] = np.roll(F[7, 0, :], 1)
+        F[5, 0, :] = F_star[7, 0, :]
         # redirect top-left to top-right
-        F[8, 0, :] = np.roll(F[6, 0, :], -1)
+        F[8, 0, :] = F_star[6, 0, :]
         # redirect left to right
-        F[1, 0, :] = F[3, 0, :]
+        F[1, 0, :] = F_star[3, 0, :]
     if right:
         # redirect top-right to top-left
-        F[6, -1, :] = np.roll(F[8, -1, :], 1)
+        F[6, -1, :] = F_star[8, -1, :]
         # redirect bottom-right to bottom-left
-        F[7, -1, :] = np.roll(F[5, -1, :], -1)
+        F[7, -1, :] = F_star[5, -1, :]
         # redirect right to left
-        F[3, -1, :] = F[1, -1, :]
+        F[3, -1, :] = F_star[1, -1, :]
 
 
-def slide_top(F: np.array, rho: float, u: np.array):
+def slide_top(F: np.array, rho: float, u: np.array) -> None:
+    """
+    applies a "sliding lit" to the top
+    :param F: probability density funciton of shape (c,x,y) with c=9
+    :param rho: density of the sliding lit
+    :param u: velocity of the sliding lit
+    """
+
     def calc_moving(i, i_opposite):
         second_part = 2 * w[i] * rho * (np.einsum('c,cy -> y', c[:, i], u) / (1 / 3))
         F[i_opposite, :, -1] = F[i, :, -1] - second_part

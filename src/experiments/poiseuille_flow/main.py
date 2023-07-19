@@ -18,8 +18,9 @@ def run_poiseuille_flow(params: Parameters) -> States:
     for i in tqdm(range(params.iterations)):
         boltzmann.collision(F, omega=params.omega)
         boltzmann.pressure(F, pressure_in=params.pressure_in, pressure_out=params.pressure_out)
+        F_star = np.copy(F)
         boltzmann.stream(F)
-        boltzmann.bounce_back(F, top=True, bot=True)
+        boltzmann.bounce_back(F, F_star, top=True, bot=True)
 
         states.add(F)
 
@@ -44,8 +45,8 @@ def analytical_solution(states: States, step: int, y: int, h: int):
 if __name__ == '__main__':
     params = Parameters(
         path="data/poiseuille-flow",
-        x_dim=10,
-        y_dim=10,
+        x_dim=100,
+        y_dim=100,
         omega=1.0,
         pressure_in=1.05,
         pressure_out=1.0,

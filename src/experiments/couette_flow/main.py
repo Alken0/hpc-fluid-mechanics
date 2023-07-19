@@ -26,8 +26,9 @@ def run_couette_flow(params: Parameters) -> States:
     for i in tqdm(range(params.iterations)):
         boltzmann.collision(F, omega=params.omega)
         boltzmann.slide_top(F, params.sliding_rho, sliding_u)
-        boltzmann.bounce_back(F, bot=True)
+        F_star = np.copy(F)
         boltzmann.stream(F)
+        boltzmann.bounce_back(F, F_star, bot=True)
 
         states.add(F)
         # plotter.velocity(F, step=i)
@@ -47,4 +48,4 @@ if __name__ == '__main__':
     states = run_couette_flow(params)
 
     for i in [0, 10, 50, 100, 999]:
-        plot.velocity_field_couette_flow(states, i, scale=1, path=params.path)
+        plot.velocity_field_couette_flow(states, i, path=params.path)

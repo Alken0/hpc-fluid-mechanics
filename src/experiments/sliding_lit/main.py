@@ -24,10 +24,11 @@ def main(params: Parameters) -> States:
     states = States()
     plotter = plot.Plotter(timeout=0.00001, vmax=1, vmin=0)
     for i in tqdm(range(params.iterations)):
-        boltzmann.collision(F)
+        boltzmann.collision(F, omega=params.omega)
         boltzmann.slide_top(F, 1, sliding_u)
-        boltzmann.bounce_back(F, bot=True, left=True, right=True)
+        F_star = np.copy(F)
         boltzmann.stream(F)
+        boltzmann.bounce_back(F, F_star, bot=True, left=True, right=True)
 
         if i % 1000 == 0:
             states.add(F)
@@ -38,5 +39,12 @@ def main(params: Parameters) -> States:
 
 
 if __name__ == '__main__':
-    params = Parameters(path="data/sliding_lit", x_dim=300, y_dim=300, iterations=100000)
+    params = Parameters(
+        path="data/sliding_lit",
+        x_dim=300,
+        y_dim=300,
+        iterations=100000,
+        sliding_u=0.01,
+    )
     states = main(params)
+    Saver.save(params.path, states, params)
