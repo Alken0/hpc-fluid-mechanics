@@ -160,39 +160,30 @@ def analytic_solution(a0, t, L_z, omega=1) -> float:
 def pressure(F: np.array, pressure_in: float, pressure_out: float) -> None:
     """
     applies pressure in x-direction to probability-density-function
-    :param F: np.array of shape (c,x+2,y+2) where "+2" means padding boundary of 1 on both sides
+    :param F: np.array of shape (c,x,y)
     :return: None - modifies F itself
     """
-
-    def field_at(index):
-        # helper function which returns the field at a given index and adds a needed dimension
-        field = F[:, index]
-        return np.expand_dims(field, 1)
-
-    n = F.shape[1] - 2  # - "boundary-left=1" - "one for len/index"
-
     # calculate rho-in/out
-    pressure_array = np.ones(shape=(F.shape[1], F.shape[2]))
+    pressure_array = np.ones(shape=(1, F.shape[2]))
     rho_in = pressure_array * pressure_in
     rho_out = pressure_array * pressure_out
 
-    # get density/velocity/equilibrium of whole field for later calculations
-    u = velocity(F)
-    rho = density(F)
-    equi = equilibrium(rho, u)
+    # get the field at certain positions
+    field_at_1 = np.expand_dims(F[:, 1], 1)
+    field_at_n = np.expand_dims(F[:, -2], 1)
 
-    # get needed columns of the previous field (expand to match dimensions)
-    equi_1 = np.expand_dims(equi[:, 1], 1)
-    equi_n = np.expand_dims(equi[:, n], 1)
-    u_1 = np.expand_dims(u[:, 1], 1)
-    u_n = np.expand_dims(u[:, n], 1)
+    # calculate velocity and equilibrium functions
+    u_1 = velocity(field_at_1)
+    u_n = velocity(field_at_n)
+    equi_1 = equilibrium(density(field_at_1), u_1)
+    equi_n = equilibrium(density(field_at_n), u_n)
 
     # set F at location x_0
-    F_0 = equilibrium(rho_in, u_n) + (field_at(n) - equi_n)
-    F[:, 0] = F_0[:, 0]
+    f_0 = equilibrium(rho_in, u_n) + (field_at_n - equi_n)
+    F[:, 0] = f_0.squeeze(1)  # remove middle dimension of shape (9,1,y)
     # set F at location x_n+1
-    F_n1 = equilibrium(rho_out, u_1) + (field_at(1) - equi_1)
-    F[:, n + 1] = F_n1[:, n + 1]
+    f_n_1 = equilibrium(rho_out, u_1) + (field_at_1 - equi_1)
+    F[:, -1] = f_n_1.squeeze(1)  # remove middle dimension of shape (9,1,y)
 
 
 def bounce_back(F: np.array, F_star: np.array, top=False, bot=False, left=False, right=False) -> None:
