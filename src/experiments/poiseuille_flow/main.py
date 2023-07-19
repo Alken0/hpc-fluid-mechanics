@@ -52,14 +52,12 @@ if __name__ == '__main__':
         pressure_out=1.0,
         iterations=1000
     )
-    states = run_poiseuille_flow(params)
+    states, params = Saver.load(params.path)
 
-    Saver.save(params.path, states, params)
-
-    for step in [10, 50, 999]:
+    for step in [10, 500, 999]:
         a = analytical_solution(states, step, y=1, h=params.y_dim)
         plot.velocity_for_step_at_columns(states, columns=[1, 5], analytical_solution=a, step=step, path=params.path)
 
-    for step in [10, 50, 999]:
+    for step in [10, 500, 999]:
         plot.velocity_field(states, step, scale=None, path=params.path)
-    plot.density_at_column_x(states, col=int(params.x_dim / 2), steps=[10, 50, 999], path=params.path)
+    plot.density_at_column_x(states, col=int(params.x_dim / 2), steps=[10, 200, 500, 999], path=params.path)

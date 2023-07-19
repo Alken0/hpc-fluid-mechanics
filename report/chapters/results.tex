@@ -234,26 +234,30 @@ Because of the pressure, a flow starts from one side to the other and maxes out 
 The resulting velocity field is shown in \cref{fig:pf-velocity-field}.
 \begin{figure}[h!]
     \begin{center}
-        \includegraphics[width=0.5\linewidth]{graphs/PoiseuilleFlow/velocity_field_50}
+        \includegraphics[width=0.5\linewidth]{graphs/PoiseuilleFlow/velocity_field_999}
         \caption{The steady state of the Poiseuille Flow.}
         \label{fig:pf-velocity-field}
     \end{center}
 \end{figure}
 
 The velocity field inside the pipe changes as shown in \cref{fig:pf-velocity-areas}.
-It can be clearly seen, that the amount of viscosity is first higher at the start of the pipe, near the pressure difference.
-While the experiment continuous, the velocity adjusts throughout further in the pipe until it is the same.
+It can be clearly seen, that a \textit{wave} of pressure flows through the pipe.
+While in the beginning this leads to very different velocities in the pipe, this difference gets smaller over time.
+After 1000 timesteps, the equilibrium state is almost reached, but the final state is already clear.
+The lines would completely overlap and show no difference anymore, which means, that the velocity is the same in the whole pipe.
 
+The final hill shape can be explained by looking at the pipe which has two solid borders to the sides.
+These borders result in friction, which slows down the fluid and results in slightly faster movement in the middle of the pipe.
 
 \begin{figure}[h!]
-    \begin{minipage}{0.33\textwidth}
-        \includegraphics[width=\linewidth]{graphs/PoiseuilleFlow/velocity_at_columns_for_step_0}
-    \end{minipage}% don't remove this comment - uncomments a new line
     \begin{minipage}{0.33\textwidth}
         \includegraphics[width=\linewidth]{graphs/PoiseuilleFlow/velocity_at_columns_for_step_10}
     \end{minipage}% don't remove this comment - uncomments a new line
     \begin{minipage}{0.33\textwidth}
         \includegraphics[width=\linewidth]{graphs/PoiseuilleFlow/velocity_at_columns_for_step_50}
+    \end{minipage}% don't remove this comment - uncomments a new line
+    \begin{minipage}{0.33\textwidth}
+        \includegraphics[width=\linewidth]{graphs/PoiseuilleFlow/velocity_at_columns_for_step_999}
     \end{minipage}
     \caption{
         Different flow states during the simulation.
@@ -262,6 +266,10 @@ While the experiment continuous, the velocity adjusts throughout further in the 
 \end{figure}
 
 The density in the center column at $\rho\left( x, \frac{L_y}{2} \right)$ is visualized in \cref{fig:pf-density}.
+The figure shows that while the velocity is reaching an equal amount through the pipe, the density differs.
+The density depends on the pressure, which is slowly decreasing through the pipe, which is why the density has to decrease as well.
+Again the equilibrium state is almost reached after 1000 timesteps, but the linear decay of density through the pipe is already visible.
+
 \begin{figure}[h!]
     \begin{center}
         \includegraphics[width=0.5\linewidth]{graphs/PoiseuilleFlow/density_at_column_x}

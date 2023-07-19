@@ -165,13 +165,13 @@ def velocity_for_step_at_columns(states: States, columns: List[int], analytical_
 
 def density_at_column_x(states: States, col: int, steps: List[int], path: Optional[str] = None):
     fig = plt.figure(dpi=DPI)
-    plt.title(f'Density in Time for Column y={col} ')
+    plt.title(f'Density in the Center Row at different timesteps')
     plt.xlabel('Y')
     plt.ylabel('Density')
 
-    y = range(states[0].shape[2])
+    y = range(states[0].shape[2] - 2)
     for step in steps:
-        column = boltzmann.density(states[step])[:, col]
+        column = boltzmann.density(states[step])[1:-1, col]
         plt.plot(y, column, label=f"density @{step}")
 
     plt.legend()
