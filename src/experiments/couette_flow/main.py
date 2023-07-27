@@ -38,8 +38,8 @@ def run_couette_flow(params: Parameters) -> States:
 if __name__ == '__main__':
     params = Parameters(
         path="data/couette_flow",
-        x_dim=10,
-        y_dim=10,
+        x_dim=100,
+        y_dim=100,
         omega=1.0,
         sliding_u=-0.1,
         sliding_rho=1,
