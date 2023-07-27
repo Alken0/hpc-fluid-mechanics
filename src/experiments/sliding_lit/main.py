@@ -40,11 +40,12 @@ def main(params: Parameters) -> States:
 
 if __name__ == '__main__':
     params = Parameters(
-        path="data/sliding_lit",
+        path="data/sliding_lit_new",
         x_dim=300,
         y_dim=300,
+        omega=1.7,
+        sliding_u=0.1,
         iterations=100000,
-        sliding_u=0.01,
     )
     states = main(params)
     Saver.save(params.path, states, params)
