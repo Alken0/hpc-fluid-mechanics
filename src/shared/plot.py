@@ -140,7 +140,30 @@ def density_aggregate_over_time(states: States, path: Optional[str] = None):
         save_fig(fig, path, "density_aggregate_over_time")
 
 
-def velocity_for_step_at_columns(states: States, columns: List[int], analytical_solution, step: int,
+def velocity_for_step_at_columns_analytical(
+        states: States, col: int, steps: List[int], analytical_solution, path: Optional[str] = None):
+    fig = plt.figure(dpi=DPI)
+    plt.title(f'Velocity at column {col}')
+    plt.xlabel('Y')
+    plt.ylabel('Velocity')
+
+    y = range(states[0].shape[2])
+    for step in steps:
+        velocity = boltzmann.velocity(states[step])
+        column = velocity[0, col, :]
+        plt.plot(y, column, label=f"step {step}")
+
+    plt.plot(y, analytical_solution, label=f"analytical solution")
+
+    plt.legend()
+    plt.tight_layout()
+    if path is None:
+        plt.show()
+    else:
+        save_fig(fig, path, f"velocity_for_step_at_columns_analytical")
+
+
+def velocity_for_step_at_columns(states: States, columns: List[int], step: int,
                                  path: Optional[str] = None):
     fig = plt.figure(dpi=DPI)
     plt.title(f'Velocity at timestep {step}')
@@ -153,7 +176,6 @@ def velocity_for_step_at_columns(states: States, columns: List[int], analytical_
     for col in columns:
         column = velocity[0, col, :]
         plt.plot(y, column, label=f"column {col}")
-    # plt.plot(y, analytical_solution, label="analytical solution")
 
     plt.legend()
     plt.tight_layout()
@@ -188,13 +210,11 @@ def velocity_at_column(states: States, col: int, steps: List[int], path: Optiona
     plt.xlabel('Y')
     plt.ylabel('Velocity')
 
-    velocities = [boltzmann.velocity(s) for s in states]
     y = range(states[0].shape[2])
-
     plt.plot(y, [0 for _ in range(len(y))], label="zero-line")
 
     for step in steps:
-        column = np.array(velocities)[step, 0, col, :]
+        column = boltzmann.velocity(states[step])[0, col, :]
         plt.plot(y, column, label=f"velocity @{step}")
 
     plt.legend()

@@ -2,7 +2,7 @@ import numpy as np
 from tqdm import tqdm
 
 from src.shared import boltzmann, plot
-from src.shared.util import Parameters, States, Saver
+from src.shared.util import Parameters, States
 
 
 def init(x_dim, y_dim) -> np.array:
@@ -12,7 +12,7 @@ def init(x_dim, y_dim) -> np.array:
 
 
 def run_poiseuille_flow(params: Parameters) -> States:
-    F = init(params.x_dim + 2, params.y_dim + 2)
+    F = init(params.x_dim, params.y_dim)
 
     states = States()
     for i in tqdm(range(params.iterations)):
@@ -27,19 +27,15 @@ def run_poiseuille_flow(params: Parameters) -> States:
     return states
 
 
-def analytical_solution(states: States, step: int, y: int, h: int):
+def analytical_solution(params: Parameters):
     """h = diameter of the tube"""
-    # TODO what is dp/dx?
-    viscosity = boltzmann.viscosity_for_amplitude(
-        N_y=states[step].shape[2],
-        y=y,
-        a_0=states[0][0, y, :],
-        a_t=states[step][0, y, :],
-        t=step
-    )
-    density = boltzmann.density(states[step])[:, y]
-
-    return -1 / (2 * viscosity * density) * y * (h - y)
+    viscosity = boltzmann.viscosity_for_omega(params.omega)
+    rho = 1
+    mu = rho * viscosity
+    first = -1 / (2 * mu)
+    second = (params.pressure_in - params.pressure_out) / params.y_dim
+    third = np.arange(params.y_dim) * (params.x_dim - np.arange(params.y_dim))
+    return -first * second * third
 
 
 if __name__ == '__main__':
@@ -50,13 +46,19 @@ if __name__ == '__main__':
         omega=1.0,
         pressure_in=1.05,
         pressure_out=1.0,
-        iterations=1000
+        iterations=2000
     )
-    states, params = Saver.load(params.path)
+    states = run_poiseuille_flow(params)
 
     for step in [10, 500, 999]:
-        a = analytical_solution(states, step, y=1, h=params.y_dim)
-        plot.velocity_for_step_at_columns(states, columns=[1, 5], analytical_solution=a, step=step, path=params.path)
+        plot.velocity_for_step_at_columns(states, columns=[1, 5], step=step, path=params.path)
+
+    plot.velocity_for_step_at_columns_analytical(
+        states, int(params.x_dim / 2),
+        analytical_solution=analytical_solution(params),
+        steps=[10, 200, 500, 999, 1999],
+        path=params.path
+    )
 
     for step in [10, 500, 999]:
         plot.velocity_field(states, step, scale=None, path=params.path)
