@@ -1,5 +1,3 @@
-#!/home/jonas/workspace/hpc-fluid-mechanics/venv/bin/python
-
 import time as time
 
 #
