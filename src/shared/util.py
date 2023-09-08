@@ -58,9 +58,6 @@ class States:
     def __getitem__(self, item):
         return self._states[item]
 
-    def __setitem__(self, key, value):
-        self._states[key] = value
-
     def __len__(self):
         return len(self._states)
 

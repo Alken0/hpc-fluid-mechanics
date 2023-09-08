@@ -100,7 +100,7 @@ def communicate(data: np.array, rank: int, size_x: int, cartcomm: Cartcomm, top,
         data[[3, 6, 7], :, -2] = recvbuf
 
 
-def collect(data: np.array, rank, x_dim, y_dim, cartcomm, domain_x, domain_y, size, step):
+def collect(data: np.array, rank, x_dim, y_dim, cartcomm, domain_x, domain_y, size, step, size_x):
     if rank == 0:
         print(f"currently @ {step}")
         all_data = np.zeros(shape=(9, x_dim, y_dim))
@@ -113,11 +113,11 @@ def collect(data: np.array, rank, x_dim, y_dim, cartcomm, domain_x, domain_y, si
                 cartcomm.Recv(buf, r, 0)
             x_start = x * (domain_x - 2)
             x_end = (x + 1) * (domain_x - 2)
-            y_start = (4 - y - 1) * (domain_y - 2)
-            y_end = (4 - y) * (domain_y - 2)
+            y_start = (size_x - y - 1) * (domain_y - 2)
+            y_end = (size_x - y) * (domain_y - 2)
             all_data[:, x_start:x_end, y_start:y_end] = buf
         print("finished gathering")
-        plot.velocity_field_couette_flow(all_data, step=step, path=params.path)
+        plot.stream_field_raw(all_data, step=step, path=params.path)
         print("finished plotting")
     else:
         cartcomm.Send(data[:, 1:-1, 1:-1].copy(), 0, 0)
@@ -156,32 +156,6 @@ def main(params: Parameters):
     domain_y = params.y_dim // size_y + 2
     F, sliding_u = init(domain_x, domain_y, params.sliding_u)
 
-    # test
-    for i in range(50000):
-        boltzmann.collision(F, omega=params.omega)
-        if top:
-            boltzmann.slide_top(F, params.sliding_rho, sliding_u)
-        F_star = np.copy(F)
-        boltzmann.stream(F)
-        boltzmann.bounce_back(F, F_star, bot=True)
-        Communicate2(
-            grid=F,
-            cartcomm=cartcomm,
-            s_and_d=s_and_d
-        )
-    collect(
-        data=F,
-        cartcomm=cartcomm,
-        domain_x=domain_x,
-        domain_y=domain_y,
-        x_dim=params.x_dim,
-        y_dim=params.y_dim,
-        rank=rank,
-        size=size,
-        step=49999
-    )
-    exit(0)
-
     # print(f"{rank=}  {sU=} {dU=}   {sD=} {dD=}   {sL=} {dL=}   {sR=} {dR=}   {top=} {bot=} {left=} {right=}")
 
     for i in range(params.iterations):
@@ -192,7 +166,7 @@ def main(params: Parameters):
         boltzmann.stream(F)
         boltzmann.bounce_back(F, F_star, bot=bot, left=left, right=right)
         Communicate2(grid=F, s_and_d=s_and_d, cartcomm=cartcomm)
-        if i % 1000 == 0:
+        if i % 5000 == 0:
             collect(
                 data=F,
                 cartcomm=cartcomm,
@@ -202,18 +176,16 @@ def main(params: Parameters):
                 y_dim=params.y_dim,
                 rank=rank,
                 size=size,
-                step=i
+                step=i,
+                size_x=size_x
             )
 
 
 if __name__ == '__main__':
     params = Parameters(
         path="data/sliding_lit_parallel",
-        x_dim=100,
-        y_dim=100,
+        x_dim=324,
+        y_dim=324,
         iterations=100000,
     )
     main(params)
-
-    # copy paste
-    # print(f"{rank=} {coordinates=}  {so urce=}  {destination=}")
