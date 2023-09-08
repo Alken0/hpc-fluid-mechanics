@@ -279,7 +279,21 @@ def velocity_field(states: States, step: int, scale: Optional[float] = None, pat
         save_fig(fig, path, f"velocity_field_{step}")
 
 
-def stream_field(states: States, step: int, scale: float = 0.06, path: Optional[str] = None):
+def stream_field_raw(states: np.ndarray, step: int, path: Optional[str] = None):
+    fig = plt.figure(dpi=DPI)
+    plt.title(f'Stream Field @{step}')
+    plt.xlabel('X')
+    plt.ylabel('Y')
+    x, y = np.meshgrid(np.arange(states.shape[1]), np.arange(states.shape[2]))
+    u, v = np.swapaxes(boltzmann.velocity(states), 1, 2)
+    plt.streamplot(x, y, u, v)
+    if path is None:
+        plt.show()
+    else:
+        save_fig(fig, path, f"stream_field_{step}")
+
+
+def stream_field(states: States, step: int, path: Optional[str] = None):
     fig = plt.figure(dpi=DPI)
     plt.title(f'Stream Field @{step}')
     plt.xlabel('X')

@@ -25,7 +25,7 @@ def main(params: Parameters) -> States:
     plotter = plot.Plotter(timeout=0.00001, vmax=1, vmin=0)
     for i in tqdm(range(params.iterations)):
         boltzmann.collision(F, omega=params.omega)
-        boltzmann.slide_top(F, 1, sliding_u)
+        boltzmann.slide_top(F, params.sliding_rho, sliding_u)
         F_star = np.copy(F)
         boltzmann.stream(F)
         boltzmann.bounce_back(F, F_star, bot=True, left=True, right=True)
@@ -40,11 +40,12 @@ def main(params: Parameters) -> States:
 
 if __name__ == '__main__':
     params = Parameters(
-        path="data/sliding_lit_new",
+        path="data/sliding_lit",
         x_dim=300,
         y_dim=300,
         omega=1.7,
         sliding_u=0.1,
+        sliding_rho=1,
         iterations=100000,
     )
     states = main(params)
