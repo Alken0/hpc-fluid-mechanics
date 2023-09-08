@@ -279,6 +279,17 @@ def velocity_field(states: States, step: int, scale: Optional[float] = None, pat
         save_fig(fig, path, f"velocity_field_{step}")
 
 
+def stream_field_raw(data: np.ndarray, step: int, path: str):
+    fig = plt.figure(dpi=DPI)
+    plt.title(f'Stream Field @{step}')
+    plt.xlabel('X')
+    plt.ylabel('Y')
+    x, y = np.meshgrid(np.arange(data.shape[1]), np.arange(data.shape[2]))
+    u, v = np.swapaxes(boltzmann.velocity(data), 1, 2)
+    plt.streamplot(x, y, u, v)
+    save_fig(fig, path, f"stream_field_{step:06}")
+
+
 def stream_field(states: States, step: int, scale: float = 0.06, path: Optional[str] = None):
     fig = plt.figure(dpi=DPI)
     plt.title(f'Stream Field @{step}')
@@ -293,21 +304,21 @@ def stream_field(states: States, step: int, scale: float = 0.06, path: Optional[
         save_fig(fig, path, f"stream_field_{step}")
 
 
-def velocity_field_couette_flow(states: States, step: int, scale: float = 1.0, path: Optional[str] = None):
+def velocity_field_couette_flow(states: np.ndarray, step: int, scale: float = 1.0, path: Optional[str] = None):
     fig = plt.figure(dpi=DPI)
     plt.title(f'Velocity Field @{step}')
     plt.xlabel('X')
     plt.ylabel('Y')
 
     # plot velocities
-    velocities = boltzmann.velocity(states[step][:, :, 1:states[step].shape[2] - 2])
+    velocities = boltzmann.velocity(states[:, :, 1:states.shape[2] - 2])
     data = np.swapaxes(velocities, 1, 2)
     plt.quiver(data[0], data[1], angles='xy', scale_units='xy', scale=scale)
 
     # plot boundaries exactly inbetween artificial boundary and shown points
-    y = range(states[step].shape[1])
-    upper_boundary = np.ones(states[step].shape[1]) * states[step].shape[2] - 3 - 0.5
-    lower_boundary = np.ones(states[step].shape[1]) * -0.5
+    y = range(states.shape[1])
+    upper_boundary = np.ones(states.shape[1]) * states.shape[2] - 3 - 0.5
+    lower_boundary = np.ones(states.shape[1]) * -0.5
     plt.plot(y, upper_boundary, label="upper (moving) boundary")
     plt.plot(y, lower_boundary, label="lower (static) boundary")
 
