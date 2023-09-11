@@ -5,9 +5,9 @@
 The Shear Wave Decay is a common concept in computational physics to measure the kinematic viscosity of a fluid.
 It is set up by creating an initial sinusoidal velocity profile and measuring the decay rate.
 The field is set up with a periodic boundary condition on each side, which results in e.g.\ particles moving out of the right to appear back on the left side.
-The default parameters for the Shear Wave Decay experiments are shown in \cref{tab:swd-parameters} and used if not stated otherwise.
+The default parameters of the Shear Wave Decay experiments are shown in \cref{tab:swd-parameters} and used if not stated otherwise.
 
-\begin{table}[ht]
+\begin{table}[H]
     \centering % used for centering table
     \begin{tabular}{c c}
 % centered columns (4 columns)
@@ -21,7 +21,7 @@ The default parameters for the Shear Wave Decay experiments are shown in \cref{t
         $t_{\max}$ & 1000  \\ [1ex] % [1ex] adds vertical space
         \hline %inserts single line
     \end{tabular}
-    \caption{Parameters for the Shear Wave Decay} % title of Table
+    \caption{Parameters of the Shear Wave Decay} % title of Table
     \label{tab:swd-parameters}
 \end{table}
 
@@ -41,7 +41,7 @@ This is due to the fact that the system tries to reach a state of equilibrium wh
 Therefore, a flow is created from the higher density area to the lower density area.
 This flow continues until the mass at the previous lower density area is so dense, that no further flow is created. %TODO better explaining why it overflows!
 It now reached a state similar to the beginning however the dense and low-dense areas swapped which is why the flow will have opposite directions in the next iteration.
-This process can be seen in \cref{fig:swd-stream-velocity}. % TODO fix formatting (text-image-text-image)
+This process can be seen in \cref{fig:swd-stream-velocity}.
 
 \begin{figure}[H]
     \begin{minipage}{0.33\textwidth}
@@ -157,23 +157,15 @@ In theory, this may even have an impact on the experiments, but omega was set to
 
 \section{Couette Flow}\label{sec:couette-flow}
 The \textit{Couette Flow} arises in a bounded field with two distinct boundaries located at the top and bottom.
-Notably, the lower boundary remains stationary, while the upper boundary is sliding in x-direction, as visualized in \cref{fig:cf-initial-condition}.
+Notably, the lower boundary remains stationary, while the upper boundary is sliding in x-direction.
 Periodic boundary conditions are enforced along the right and left sides.
-The initial condition, depicted in \cref{fig:cf-initial-condition} and can be mathematically expressed as follows:
+The initial condition can be mathematically expressed as follows:
 \begin{equation*}
     \begin{aligned}
         \rho(0) = 0 \\
         \mathbf{u}(0) = 0 \cdot
     \end{aligned}
 \end{equation*}
-
-\begin{figure}[H]
-    \begin{center}
-        \includegraphics[width=0.5\linewidth]{graphs/CouetteFlow/velocity_field_couette_flow_0}
-        \caption{Initial condition with a sliding boundary at the top, periodic boundary conditions to the side and a hard wall to the bottom.}
-        \label{fig:cf-initial-condition}
-    \end{center}
-\end{figure}
 
 Because of the friction of the boundaries, the fluid starts flow.
 More specifically, the fluid in the top starts to get momentum, because it is close to the upper boundary which is moving.
@@ -213,14 +205,14 @@ To reproduce this experiment, please use the parameters from \cref{tab:cf-parame
         $t_{\max}$  & 1000  \\ [1ex] % [1ex] adds vertical space
         \hline %inserts single line
     \end{tabular}
-    \caption{Parameters for the Couette Flow} % title of Table
+    \caption{Parameters of the Couette Flow} % title of Table
     \label{tab:cf-parameters}
 \end{table}
 
 
 \section{Poiseuille Flow}
 The \textit{Poiseuille Flow} can be described as a pressure pipe.
-There are stationary boundaries at the top and bottom and a periodic boundary condition to the sides, as shown in %TODO .
+There are stationary boundaries at the top and bottom and a periodic boundary condition to the sides, as seen in \cref{fig:pf-velocity-field}.
 In the beginning all velocity is set to 0 as defined by the initial condition
 \begin{equation*}
     \begin{aligned}
@@ -234,17 +226,20 @@ The resulting velocity field is shown in \cref{fig:pf-velocity-field}.
 \begin{figure}[H]
     \begin{center}
         \includegraphics[width=0.5\linewidth]{graphs/PoiseuilleFlow/velocity_field_999}
-        \caption{The steady state of the Poiseuille Flow.}
+        \caption{The steady state of the Poiseuille Flow. This graph shows an 8x8 field to increase readability.}
         \label{fig:pf-velocity-field}
     \end{center}
 \end{figure}
 
 \begin{figure}[H]
-    \begin{minipage}{0.5\textwidth}
+    \begin{minipage}{0.33\textwidth}
         \includegraphics[width=\linewidth]{graphs/PoiseuilleFlow/velocity_at_columns_for_step_10}
     \end{minipage}% don't remove this comment - uncomments a new line
-    \begin{minipage}{0.5\textwidth}
+    \begin{minipage}{0.33\textwidth}
         \includegraphics[width=\linewidth]{graphs/PoiseuilleFlow/velocity_at_columns_for_step_999}
+    \end{minipage}% don't remove this comment - uncomments a new line
+    \begin{minipage}{0.33\textwidth}
+        \includegraphics[width=\linewidth]{graphs/PoiseuilleFlow/velocity_for_step_at_columns_analytical}
     \end{minipage}
     \caption{
         The velocity at different cross-sections of the pipe through the simulation.
@@ -255,8 +250,11 @@ The resulting velocity field is shown in \cref{fig:pf-velocity-field}.
 The velocity field inside the pipe changes as shown in \cref{fig:pf-velocity-areas}.
 It can be clearly seen, that a \textit{wave} of pressure flows through the pipe.
 While in the beginning this leads to very different velocities in the pipe, this difference gets smaller over time.
-After 1000 timesteps, the equilibrium state is almost reached, but the final state is already clear.
-The lines to the right would completely overlap and show no difference anymore, which means, that the velocity is the same in the whole pipe.
+After 1000 timesteps, the equilibrium state is almost reached in the beginning of the pipe.
+The lines to the right would completely overlap and show no difference anymore, which means, that the velocity and will not change any further.
+
+Throughout the pipe however, the equilibrium state is not yet reached and will need further time as shown in the right graph.
+It shows that the velocity in the middle of the pipe will still increase after 2000 steps before reaching its final state given by the analytical solution.
 \newline
 
 Looking at \cref{fig:pf-velocity-areas}, a final \textit{hill} shaping velocity emerges throughout the field.
@@ -275,13 +273,36 @@ The density in the center column at $\rho\left( x, \frac{L_y}{2} \right)$ is vis
 The figure shows that while the velocity is reaching an equal amount through the pipe, the density differs.
 The density depends on the pressure, which is slowly decreasing through the pipe, which is why the density has to decrease as well.
 Again the equilibrium state is almost reached after 1000 timesteps, but the linear decay of density through the pipe is already visible.
+\newline
+
+To reproduce this experiment, please use the parameters from \cref{tab:pf-parameters}.
+Use $L_x = 10$ and $L_y = 10$ to generate a more readable velocity field.
+
+\begin{table}[H]
+    \centering % used for centering table
+    \begin{tabular}{c c}
+% centered columns (4 columns)
+        \hline\hline %inserts double horizontal lines
+        Parameter    & Value \\ [0.5ex] % inserts table heading
+        \hline % inserts single horizontal line
+        $L_x$        & 100   \\
+        $L_y$        & 100   \\
+        $\omega$     & 1.0   \\
+        $\epsilon$   & 0.01  \\
+        pressure in  & 1.05  \\
+        pressure out & 1.0   \\
+        $t_{\max}$   & 2000  \\ [1ex] % [1ex] adds vertical space
+        \hline %inserts single line
+    \end{tabular}
+    \caption{Parameters of the Poiseulle Flow} % title of Table
+    \label{tab:pf-parameters}
+\end{table}
 
 
 \section{Sliding Lit}\label{sec:sliding-lit}
 A good analogy for the \textit{Sliding Lit} environment is a box with an infinite lit, constantly sliding to the right.
 This means, there are stationary boundaries to the left, right and bottom.
 The upper boundary is similar to the \cref{sec:couette-flow} and sliding in x-direction.
-The whole setup is visualized in \cref{fig:sl-initial-condition}.
 The experiment starts with a motionless field, described by the initial condition
 \begin{equation*}
     \begin{aligned}
@@ -289,14 +310,6 @@ The experiment starts with a motionless field, described by the initial conditio
         \mathbf{u}(0) &= 0 \cdot
     \end{aligned}
 \end{equation*}
-
-\begin{figure}[H]
-    \begin{center}
-        \includegraphics[width=0.5\linewidth]{graphs/SlidingLit/initial_condition}
-        \caption{Initial Condition of the Sliding Lit Experiment}
-        \label{fig:sl-initial-condition}
-    \end{center}
-\end{figure}
 
 \begin{figure}[H]
     \begin{minipage}{0.5\textwidth}

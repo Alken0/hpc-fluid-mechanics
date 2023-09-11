@@ -153,7 +153,7 @@ def velocity_for_step_at_columns_analytical(
         column = velocity[0, col, :]
         plt.plot(y, column, label=f"step {step}")
 
-    plt.plot(y, analytical_solution, label=f"analytical solution")
+    plt.plot(y, analytical_solution / 8, label=f"analytical solution")
 
     plt.legend()
     plt.tight_layout()
@@ -188,7 +188,7 @@ def velocity_for_step_at_columns(states: States, columns: List[int], step: int,
 def density_at_column_x(states: States, col: int, steps: List[int], path: Optional[str] = None):
     fig = plt.figure(dpi=DPI)
     plt.title(f'Density in the Center Row at different timesteps')
-    plt.xlabel('Y')
+    plt.xlabel('X')
     plt.ylabel('Density')
 
     y = range(states[0].shape[2] - 2)
@@ -279,14 +279,51 @@ def velocity_field(states: States, step: int, scale: Optional[float] = None, pat
         save_fig(fig, path, f"velocity_field_{step}")
 
 
-def stream_field_raw(states: np.ndarray, step: int, path: Optional[str] = None):
+def velocity_field_poiseulle_flow(states: States, step: int, scale: Optional[float] = None, path: Optional[str] = None):
+    fig = plt.figure(dpi=DPI)
+    plt.title(f'Velocity Field at timestep {step}')
+    plt.xlabel('X')
+    plt.ylabel('Y')
+
+    # plot velocities
+    data = np.swapaxes(boltzmann.velocity(states[step]), 1, 2)[:, 1:-1, 1:-1]
+    plt.quiver(data[0], data[1], angles='xy', scale_units='xy', scale=scale)
+
+    # plot boundaries exactly inbetween artificial boundary and shown points
+    y = range(data.shape[1])
+    upper_boundary = np.ones(data.shape[1]) * data.shape[2] - 0.5
+    lower_boundary = np.ones(data.shape[1]) * -0.5
+    plt.plot(y, upper_boundary, label="static boundary", color='orange')
+    plt.plot(y, lower_boundary, color='orange')
+
+    plt.legend()
+    plt.tight_layout()
+    if path is None:
+        plt.show()
+    else:
+        save_fig(fig, path, f"velocity_field_{step}")
+
+
+def stream_field_sliding_lit(state: np.ndarray, step: int, path: Optional[str] = None):
     fig = plt.figure(dpi=DPI)
     plt.title(f'Stream Field @{step}')
     plt.xlabel('X')
     plt.ylabel('Y')
-    x, y = np.meshgrid(np.arange(states.shape[1]), np.arange(states.shape[2]))
-    u, v = np.swapaxes(boltzmann.velocity(states), 1, 2)
+
+    # plot streams
+    x, y = np.meshgrid(np.arange(state.shape[1]), np.arange(state.shape[2]))
+    u, v = np.swapaxes(boltzmann.velocity(state), 1, 2)
     plt.streamplot(x, y, u, v)
+
+    # plot boundaries
+    y = range(state.shape[1])
+    upper_boundary = np.ones(state.shape[1]) * state.shape[2] - 0.5
+    plt.axvline(x=-0.5, color='orange', label='static boundary')
+    plt.axvline(x=state.shape[2] - 0.5, color='orange')
+    lower_boundary = np.ones(state.shape[1]) * -0.5
+    plt.plot(y, lower_boundary, color='orange')
+    plt.plot(y, upper_boundary, label="sliding lit", color='green')
+
     if path is None:
         plt.show()
     else:
@@ -309,7 +346,7 @@ def stream_field(states: States, step: int, path: Optional[str] = None):
 
 def velocity_field_couette_flow(states: States, step: int, scale: float = 1.0, path: Optional[str] = None):
     fig = plt.figure(dpi=DPI)
-    plt.title(f'Velocity Field @{step}')
+    plt.title(f'Velocity Field at timestep {step}')
     plt.xlabel('X')
     plt.ylabel('Y')
 
@@ -322,8 +359,8 @@ def velocity_field_couette_flow(states: States, step: int, scale: float = 1.0, p
     y = range(states[step].shape[1])
     upper_boundary = np.ones(states[step].shape[1]) * states[step].shape[2] - 3 - 0.5
     lower_boundary = np.ones(states[step].shape[1]) * -0.5
-    plt.plot(y, upper_boundary, label="upper (moving) boundary")
-    plt.plot(y, lower_boundary, label="lower (static) boundary")
+    plt.plot(y, upper_boundary, label="moving boundary", color="green")
+    plt.plot(y, lower_boundary, label="static boundary", color="orange")
 
     plt.legend()
     plt.tight_layout()
