@@ -5,7 +5,7 @@
 This section deals with the topic of setting up this project and to navigate through it.
 It is intended to readers who want to run the experiments themselves or help to dig into the exact implementations.
 
-\subsection{Environement}
+\subsection{Environment}
 This project was developed using pyenv and pip.
 Pyenv was selected due to its ability to create a virtual Python environment while still utilizing pip as the native package manager, distinguishing it from alternatives like anaconda.
 \newline
@@ -43,7 +43,7 @@ Each channel resembles one direction of moving as shown in the left part of \cre
 The indices of the channels are in line with the indices of the arrows in the graphic.
 
 
-\section{Main Routine}
+\section{Main Routine}\label{sec:main-routine}
 The main routine may be seen as a function that is repeated until the experiment is over.
 It consists of several operators that stay the same in each experiment.
 For some experiments, not all operators are used or for example the \textit{bounce-back} is only applied to certain walls.
@@ -59,3 +59,17 @@ All possible operators are listed below:
 An interested reader may find the exact implementation in \textit{src/shared/boltzmann.py}.
 As it is redundant and maybe not inline with the exact implementation there won't be code examples at this point.
 However, it is to mention that all examples follow strictly the formulas explained in \cref{ch:methods}, so there is no special need in doing so.
+
+
+\section{Parallelization}\label{sec:parallelization}
+The last experiment \cref{sec:sliding-lit} utilizes the \textit{mpi4py} package to parallelize its run.
+The MPI interface allows spreading the array of the probability density function over several processes.
+Each process then determines the result of the main routine (described in \cref{sec:main-routine}) for its subarray.
+Afterward, the results are combined by shifting the boundaries of each subarray.
+\newline
+
+A right shift for process 4 works as following, if assuming that there are the processes 3, 4 and 5.
+Process 4 would receive the right side from process 3 and save it in its left side.
+Simultaneously, process 4 would send its right side to process 5.
+This is repeated for all processes.
+The exact topology of the processes may vary and is determined by MPI itself.
