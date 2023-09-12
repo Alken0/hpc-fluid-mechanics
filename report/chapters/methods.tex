@@ -1,27 +1,22 @@
 \chapter{Methods}\label{ch:methods}
+This chapter aims to explain fundamentals, used in the experiments.
+The focus is on the \textit{probability density function}, \textit{Boltzmann transport equation} and \textit{Lattice Boltzmann scheme}.
+The combination of those principles allows simulating fluids in the experiments.
 
 
-\section{Probability Density Function (PDF)}
+\section{Probability Density Function (PDF)}\label{sec:probability-density-function-(pdf)}
 The Probability Density Function (PDF) is a concept that describes the probability of finding a particle at a certain position.
-In this project, the PDF is used to track the individual trajectories of particles in phase space.
-Usually this would require solving a very large number of equations.
+In theory, the simulation would need to track the individual trajectories of every particle in phase space.
+This would require solving a very large number of equations.
 Because solving these equations would be too costly, only the averages over the volumes in the phase space are taken using the PDF\@.
-The PDF, denoted as \(f(\mathbf r_i,\mathbf v_i,t)\), represents the probability density of finding a particle at a certain position \(\mathbf{r_i}\) and velocity \(\mathbf{v_i}\) at a given time \(t\).
+Therefore, the PDF, denoted as \(f(\mathbf r_i,\mathbf v_i,t)\), represents the probability density of finding a particle at a certain position \(\mathbf{r_i}\) and velocity \(\mathbf{v_i}\) at a given time \(t\).
 
 
 \section{Boltzmann Transport Equation (BTE)}
-The equation formulates the evolution of motion for the PDF over time.
-The Boltzmann Transport Equation (BTE) consists of two parts.
-The first part is \textit{streaming} and resembles only the moving of particles.
+The Boltzmann transport equation formulates the evolution of motion of the PDF over time.
+It consists of two parts.
+The first part is \textit{streaming} and resembles only the free movement of particles.
 The second part is called \textit{collision} and deals with the interaction between particles while moving.
-
-\subsection{Streaming}\label{subsec:streaming}
-The probability density of the PDF is able to move, which is described by the Boltzmann Transport Equation (BTE).
-BTE transports the probability density distributions at a specific velocity in real space.
-While transporting, the influence of the velocity and acceleration are considered.
-The combined effect of velocity and acceleration leads to the streaming of density.
-\newline
-
 The whole Boltzmann Transport Equation is denoted as
 \begin{equation}
     \frac{\partial f\left(\mathbf{r},\mathbf{v},t\right)}{\partial t}+\mathbf{v}\nabla_{\mathbf{r}} f\left(\mathbf{r},\mathbf{v},t\right)
@@ -30,11 +25,14 @@ The whole Boltzmann Transport Equation is denoted as
     \label{eq:bte}
 \end{equation}
 
-The l.h.s.\ of the equation denotes the streaming part that was just explained and the r.h.s.\ the collision, explained in the following part.
+\subsection{Streaming}\label{subsec:streaming}
+The l.h.s.\ of \cref{eq:bte} denotes the streaming part.
+The streaming describes the free movement of the densities at a certain velocity.
+In the context of this project, movement may happen in 2d space in 9 directions, similar to a queen in chess.
 
 \subsection{Collision}\label{subsec:collision}
-Only applying streaming resembles a probability of collision of 0\%, which is not realistic.
-To account for collisions, an additional term is introduced into the equation to represent the collision process that occurs at each time step.
+Only applying streaming resembles a 0\% probability of collision between particles, which is not realistic.
+To account for collisions, an additional term is introduced at the r.h.s. of \cref{eq:bte} to represent the collision process that occurs at each time step.
 In reality, collisions between particles result in an almost instantaneous exchange of energy and momentum.
 However, these collisions occur in extremely short time intervals on the order of femtoseconds (\(10^{-15}\) seconds), making it impractical to measure them directly in the model.
 Therefore, the collision process is approximated as an instantaneous process.
@@ -42,7 +40,7 @@ Because of this instantaneous, it cannot be represented as a differential equati
 Instead, a probabilistic approach is taken to describe the effects of collisions.
 \newline
 
-In the previous ~\cref{subsec:streaming}, the Boltzmann Transport Equation (BTE) was introduced (\cref{eq:bte}), where the right term represents the collision process.
+The collision part of the Boltzmann transport equation was introduced on the r.h.s.\ in \cref{eq:bte}.
 To simplify this collision term, a relaxation time approximation is commonly used.
 This approximation assumes that the probability density function (PDF) \(f\left(\mathbf{r},\mathbf{v},t\right)\) relaxes towards a local equilibrium distribution, denoted as \(f^{eq}\left(\mathbf{r},\mathbf{v},t\right)\).
 By interpreting the streaming term as the total time derivative of the PDF, the BTE can be reformulated as follows:
@@ -53,7 +51,7 @@ By interpreting the streaming term as the total time derivative of the PDF, the 
     \label{eq:bgk}
 \end{equation}
 
-The included equilibirum function can is denoted as
+The included equilibirum function can be denoted as
 \begin{equation}
     f_i^{eq}(\rho(\mathbf{r}),\mathbf{u}(\mathbf{r}))
     =w_i\rho(\mathbf{r})

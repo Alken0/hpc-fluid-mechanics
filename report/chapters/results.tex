@@ -1,4 +1,6 @@
 \chapter{Results}\label{ch:results}
+This chapter contains all experiments and their results.
+The report to each experiment contains an explanation of the setup, explained plots and information to reproduce the experiment.
 
 
 \section{Shear Wave Decay}
@@ -88,9 +90,9 @@ The initial condition is a given by the following equation where $L_y$ resembles
     \end{aligned}
 \end{equation*}
 
-Because of the initial condition, the flow varies throughout the field.
-The equilibrium state is a state without a clearly directed movement as in the initial condition.
-So it is expected that the flow will decrease over time.
+Because of the initial condition, the flow varies throughout the field and flows in opposite directions.
+This introduces some collision at the sides of each flow stream, where particles from one flow direction interact with particles moving in opposite directions from the other stream.
+Therefore, it is expected that the flow will decrease over time and get thinner.
 
 \begin{figure}[H]
     \begin{minipage}{0.33\textwidth}
@@ -324,7 +326,7 @@ The experiment starts with a motionless field, described by the initial conditio
     \label{fig:sl-stream-field}
 \end{figure}
 
-In the experiment, the emergence of a circular flow pattern is observed in \cref{fig:sl-stream-field}.
+In the experiment, the emergence of a circular flow pattern is observed as seen in \cref{fig:sl-stream-field}.
 This pattern is instigated by maintaining a constant velocity at the upper boundary, causing the velocity to propagate throughout the entire fluid.
 Due to the confinement of the fluid within a container, distinct vertical flow patterns emerge at the sides.
 
@@ -339,6 +341,20 @@ The collision and reflection of particles at the corners result in the observed 
 \newline
 
 Because the experiment takes a long time to reach its equilibrium state, it has been parallelized using the method described in \cref{sec:parallelization}.
-The parallel experiment was then run on the BwUni-Cluster.
+\Cref{fig:sl-stream-field} was also computed by the parallel program.
+The effectiveness of the parallelism is shown in \cref{fig:sl-mlups}.
+The unit MLUPS is calculated by
 
+\begin{equation*}
+    \begin{aligned}
+        \frac{\text{number of gridpoints} * \text{number of timesteps}}{\text{runtime in ms}} \cdot
+    \end{aligned}
+\end{equation*}
 
+\begin{figure}[H]
+    \begin{center}
+        \includegraphics[width=0.5\linewidth]{graphs/SlidingLit/mlups}
+        \caption{MLUPS per number of MPI processes}
+        \label{fig:sl-mlups}
+    \end{center}
+\end{figure}
