@@ -460,7 +460,7 @@ def velocity_field_couette_flow(states: States, step: int, scale: float = 1.0, p
         save_fig(fig, path, f"velocity_field_couette_flow_{step}")
 
 
-def density_over_time_at(states: list[np.array], point=(0, 0)):
+def density_over_time_at(states: List[np.array], point=(0, 0)):
     plt.figure(1)
     plt.title(f'density over time at position 0 0')
     plt.xlabel('Time')
