@@ -38,8 +38,8 @@ def run_couette_flow(params: Parameters) -> States:
 if __name__ == '__main__':
     params = Parameters(
         path="data/couette_flow",
-        x_dim=100,
-        y_dim=100,
+        x_dim=10,
+        y_dim=10,
         omega=1.0,
         sliding_u=-0.1,
         sliding_rho=1,
@@ -47,5 +47,5 @@ if __name__ == '__main__':
     )
     states = run_couette_flow(params)
 
-    for i in [0, 10, 50, 100, 999]:
-        plot.velocity_field_couette_flow(states, i, path=params.path)
+    for step in [0, 10, 999]:
+        plot.velocity_field_couette_flow(states, step, path=params.path)

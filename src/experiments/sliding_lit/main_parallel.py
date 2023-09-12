@@ -1,3 +1,5 @@
+import argparse
+import time
 from typing import Tuple
 
 import numpy as np
@@ -76,7 +78,7 @@ def collect_and_plot(data: np.array, rank: int, params: Parameters, cartcomm: Ca
             y_end = (size_x - y) * (domain_y - 2)
             all_data[:, x_start:x_end, y_start:y_end] = buf
         print("finished gathering")
-        plot.stream_field_raw(all_data, step=step, path=params.path)
+        plot.stream_field_sliding_lit(all_data, step=step, path=params.path)
         print("finished plotting")
     else:
         cartcomm.Send(buf, 0, 0)
@@ -96,7 +98,10 @@ def main(params: Parameters):
     size = comm.Get_size()
     rank = comm.Get_rank()
 
-    # get coordinates of current process
+    if rank == 0:
+        print(f"running: x={params.x_dim}; y={params.y_dim}; iterations={params.iterations}")
+
+    # get coordinates of the current process
     size_x = int(np.floor(np.sqrt(size)))
     size_y = int(size // size_x)
     cartcomm = comm.Create_cart(
@@ -109,6 +114,9 @@ def main(params: Parameters):
     coords = cartcomm.Get_coords(rank)
     s_and_d = get_sources_and_destinations(cartcomm)
     top, bot, left, right = get_corners(coords, size_x, size_y)
+
+    # start timing
+    start_time = time.time()
 
     # create data
     domain_x = params.x_dim // size_x + 2
@@ -136,13 +144,24 @@ def main(params: Parameters):
                 size_x=size_x,
                 params=params
             )
+    if rank == 0:
+        print(f"total time: {time.time() - start_time}ms")
 
 
 if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-x', '--x_dim', type=int, default=324)
+    parser.add_argument('-y', '--y_dim', type=int, default=324)
+    parser.add_argument('-i', '--iterations', type=int, required=False, default=20000)
+    args = parser.parse_args()
+
     parameters = Parameters(
-        path="data/sliding_lit_parallel",
-        x_dim=324,
-        y_dim=324,
-        iterations=100000,
+        path="data/sliding_lit_parallel_test",
+        x_dim=args.x_dim,
+        y_dim=args.y_dim,
+        iterations=args.iterations,
+        omega=1,
+        sliding_u=0.1,
+        sliding_rho=1,
     )
     main(params=parameters)
