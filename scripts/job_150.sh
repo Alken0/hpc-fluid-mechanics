@@ -32,6 +32,5 @@ module load devel/python/3.8.6_gnu_10.2
 #
 cd ${SLURM_SUBMIT_DIR}
 echo "We have a maximum of ${SLURM_NTASKS} tasks at our disposition"
-pip install -r requirements.txt
-mpirun --mca mpi_warn_on_fork 0 -n 150 python3 -m hpc-fluid-mechanics.src.experiments.sliding_lit.main_parallel
+mpirun --mca mpi_warn_on_fork 0 -n 150 python3 ./scripts/server.py
 # I needed to switch off warning. Give it a try if it works for you without.
