@@ -800,6 +800,17 @@ def viscosity_for_amplitude(N_y, y, a_0, a_t, t):
     return nominator / denominator
 
 
+def init(x_dim: int, y_dim: int, u_sliding: float) -> Tuple[np.array, np.array]:
+    rho = np.ones(shape=(x_dim, y_dim), dtype=np.float64)
+    u = np.zeros(shape=(2, x_dim, y_dim), dtype=np.float64)
+    F = equilibrium(rho, u)
+
+    sliding_u = np.ones(shape=(2, x_dim)) * u_sliding
+    sliding_u[1] = 0
+
+    return F, sliding_u
+
+
 def get_corners(coords, size_x, size_y) -> (bool, bool, bool, bool):
     """
     :returns: top, bot, left, right
@@ -865,23 +876,14 @@ def collect_and_plot(data: np.array, rank: int, params: Parameters, cartcomm: Ca
             x_end = (x + 1) * (domain_x - 2)
             y_start = (size_x - y - 1) * (domain_y - 2)
             y_end = (size_x - y) * (domain_y - 2)
+            # print(f"{x=} {y=} {x_start=} {x_end=} {y_start=} {y_end=} {domain_x=} {domain_y=}")
+            # print(f"buf={buf.shape}  all_data={all_data.shape} slice={all_data[:, x_start:x_end, y_start:y_end].shape}")
             all_data[:, x_start:x_end, y_start:y_end] = buf
         print("finished gathering")
-        stream_field_sliding_lit(all_data, step=step, path=params.path)
+        plot.stream_field_sliding_lit(all_data, step=step, path=params.path)
         print("finished plotting")
     else:
         cartcomm.Send(buf, 0, 0)
-
-
-def init(x_dim: int, y_dim: int, u_sliding: float) -> Tuple[np.array, np.array]:
-    rho = np.ones(shape=(x_dim, y_dim))
-    u = np.zeros(shape=(2, x_dim, y_dim))
-    F = equilibrium(rho, u)
-
-    sliding_u = np.ones(shape=(2, x_dim)) * u_sliding
-    sliding_u[1] = 0
-
-    return F, sliding_u
 
 
 def get_sources_and_destinations(cartcomm: Cartcomm):
@@ -899,7 +901,7 @@ def main(params: Parameters):
     rank = comm.Get_rank()
 
     if rank == 0:
-        print(f"running: x={params.x_dim}; y={params.y_dim}; iterations={params.iterations}")
+        print(f"running: processes={size}; x={params.x_dim}; y={params.y_dim}; iterations={params.iterations}")
 
     # get coordinates of the current process
     size_x = int(np.floor(np.sqrt(size)))
@@ -925,13 +927,13 @@ def main(params: Parameters):
 
     # run simulation
     for i in range(params.iterations):
+        communicate(F=F, s_and_d=s_and_d, cartcomm=cartcomm)
         collision(F, omega=params.omega)
         if top:
             slide_top(F, 1, sliding_u)
         F_star = np.copy(F)
         stream(F)
         bounce_back(F, F_star, bot=bot, left=left, right=right)
-        communicate(F=F, s_and_d=s_and_d, cartcomm=cartcomm)
         if i % 5000 == 0:
             collect_and_plot(
                 data=F,
@@ -952,7 +954,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('-x', '--x_dim', type=int, default=324)
     parser.add_argument('-y', '--y_dim', type=int, default=324)
-    parser.add_argument('-i', '--iterations', type=int, required=False, default=20000)
+    parser.add_argument('-i', '--iterations', type=int, required=False, default=100000)
     args = parser.parse_args()
 
     parameters = Parameters(

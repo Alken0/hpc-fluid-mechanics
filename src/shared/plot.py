@@ -318,8 +318,8 @@ def stream_field_sliding_lit(state: np.ndarray, step: int, path: Optional[str] =
     # plot boundaries
     y = range(state.shape[1])
     upper_boundary = np.ones(state.shape[1]) * state.shape[2] - 0.5
-    plt.axvline(x=-0.5, color='orange', label='static boundary')
-    plt.axvline(x=state.shape[2] - 0.5, color='orange')
+    plt.plot((-0.5, state.shape[1]), (state.shape[2] - 0.5, state.shape[2] - 0.5), color='orange',
+             label='static boundary')
     lower_boundary = np.ones(state.shape[1]) * -0.5
     plt.plot(y, lower_boundary, color='orange')
     plt.plot(y, upper_boundary, label="sliding lit", color='green')
