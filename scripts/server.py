@@ -934,18 +934,6 @@ def main(params: Parameters):
         F_star = np.copy(F)
         stream(F)
         bounce_back(F, F_star, bot=bot, left=left, right=right)
-        if i % 5000 == 0:
-            collect_and_plot(
-                data=F,
-                cartcomm=cartcomm,
-                domain_x=domain_x,
-                domain_y=domain_y,
-                rank=rank,
-                size=size,
-                step=i,
-                size_x=size_x,
-                params=params
-            )
     if rank == 0:
         print(f"total time: {time.time() - start_time}ms")
 
