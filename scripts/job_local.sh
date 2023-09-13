@@ -1,3 +1,5 @@
 #!/usr/bin/env sh
 
-mpiexec --oversubscribe -np 16 python ./src/experiments/sliding_lit/server.py "$@"
+# mpiexec python -m src.experiments.sliding_lit.main_parallel "$@"
+
+mpiexec --oversubscribe -np 4 python -m src.experiments.sliding_lit.main_parallel "$@"

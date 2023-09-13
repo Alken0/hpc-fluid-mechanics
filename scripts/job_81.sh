@@ -4,8 +4,8 @@
 #SBATCH --mem=90000
 #SBATCH --time=00:30:00
 #SBATCH --partition=dev_multiple
-#SBATCH --output=job_50.out
-#SBATCH --error=job_50.err
+#SBATCH --output=job_75.out
+#SBATCH --error=job_75.err
 #SBATCH --export=ALL
 # All this you may find in https://wiki.bwhpc.de/e/BwUniCluster2.0/Batch_Queues
 # We asked for three nodes with 40 cores and each 90GB of memory. 
@@ -32,5 +32,5 @@ module load devel/python/3.8.6_gnu_10.2
 #
 cd ${SLURM_SUBMIT_DIR}
 echo "We have a maximum of ${SLURM_NTASKS} tasks at our disposition"
-mpirun --mca mpi_warn_on_fork 0 -n 50 python3 ./scripts/server.py
+mpirun -n 81 python3 ./scripts/server.py -i 100000 -x 302 -y 302
 # I needed to switch off warning. Give it a try if it works for you without.
