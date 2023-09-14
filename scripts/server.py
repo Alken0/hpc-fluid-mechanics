@@ -934,6 +934,8 @@ def main(params: Parameters):
         F_star = np.copy(F)
         stream(F)
         bounce_back(F, F_star, bot=bot, left=left, right=right)
+        if i % 1000 == 0:
+            collect_and_plot()
     if rank == 0:
         print(f"total time: {time.time() - start_time}ms")
 

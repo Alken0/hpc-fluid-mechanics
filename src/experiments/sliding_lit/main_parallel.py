@@ -13,6 +13,7 @@ from src.shared.util import Parameters
 
 def get_corners(coords, size_x, size_y) -> (bool, bool, bool, bool):
     """
+    determine if the current posiiton is at any side; important for applying bounce back or sliding
     :returns: top, bot, left, right
     """
     x = coords[1]
@@ -31,6 +32,7 @@ def get_corners(coords, size_x, size_y) -> (bool, bool, bool, bool):
 
 
 def communicate(F: np.ndarray, cartcomm: Cartcomm, s_and_d: Tuple):
+    """sends the data of the current process other processes and receives data as well"""
     sU, dU, sD, dD, sL, dL, sR, dR = s_and_d
 
     # shift to top (send to the top and receive from the bottom)
@@ -62,6 +64,7 @@ def communicate(F: np.ndarray, cartcomm: Cartcomm, s_and_d: Tuple):
 
 def collect_and_plot(data: np.array, rank: int, params: Parameters, cartcomm: Cartcomm, domain_x: int,
                      domain_y: int, size: int, step: int, size_x: int):
+    """collects all necessary data on process 0 and creates necessary plots"""
     buf = data[:, 1:-1, 1:-1].copy()
     if rank == 0:
         print(f"currently @ {step}")
@@ -80,6 +83,12 @@ def collect_and_plot(data: np.array, rank: int, params: Parameters, cartcomm: Ca
             # print(f"buf={buf.shape}  all_data={all_data.shape} slice={all_data[:, x_start:x_end, y_start:y_end].shape}")
             all_data[:, x_start:x_end, y_start:y_end] = buf
         print("finished gathering")
+        u = boltzmann.velocity(all_data)
+        rho = np.average(boltzmann.density(all_data))
+        speed = np.average(np.sqrt(u[0] ** 2 + u[1] ** 2))
+        v = boltzmann.viscosity_for_omega(params.omega)
+        L = params.x_dim
+        print(f"{step=} {speed=}, {v=}, Re: {(L * rho * speed) / v}")
         plot.stream_field_sliding_lit(all_data, step=step, path=params.path)
         print("finished plotting")
     else:
@@ -87,6 +96,7 @@ def collect_and_plot(data: np.array, rank: int, params: Parameters, cartcomm: Ca
 
 
 def get_sources_and_destinations(cartcomm: Cartcomm):
+    """returns source and destination ranks for the current process, important for communcation"""
     sR, dR = cartcomm.Shift(1, 1)
     sL, dL = cartcomm.Shift(1, -1)
     sU, dU = cartcomm.Shift(0, -1)
@@ -134,7 +144,7 @@ def main(params: Parameters):
         F_star = np.copy(F)
         boltzmann.stream(F)
         boltzmann.bounce_back(F, F_star, bot=bot, left=left, right=right)
-        if i % 5000 == 0:
+        if i == 1000 or i % 5000 == 0:
             collect_and_plot(
                 data=F,
                 cartcomm=cartcomm,
@@ -158,12 +168,12 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     parameters = Parameters(
-        path="data/sliding_lit_parallel_test",
+        path="data/sliding_lit_parallel_reynold",
         x_dim=args.x_dim,
         y_dim=args.y_dim,
         iterations=args.iterations,
-        omega=1,
-        sliding_u=0.1,
+        omega=1.7,
+        sliding_u=0.2,
         sliding_rho=1,
     )
     main(params=parameters)

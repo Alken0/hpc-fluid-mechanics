@@ -35,7 +35,7 @@ Lastly, the \textit{src/experiments} folder contains experiment-specific code.
 
 
 \section{Probability Density Function}
-The probability density function is modelled as a \textit{numpy} array with three dimensions, namely: channels, x-direction and y-direction in this order.
+The probability density function is modelled as a \textit{numpy} array (dtype=float64) with three dimensions, namely: channels, x-direction and y-direction in this order.
 While the number of channels allways has to be exactly 9, the x and y dimensions may vary in size and are independent of each other.
 These constraints to the probability density function are assumed by all implemented functions and have to hold at all time.
 \newline
@@ -51,8 +51,10 @@ The main routine may be seen as a function that is repeated until the experiment
 It consists of several operators that stay the same in each experiment.
 For some experiments, not all operators are used or for example the \textit{bounce-back} is only applied to certain walls.
 \textbf{The order of the operators always stays the same and is crucial for a successive experiment}.
+(Even if there are some exceptions of the importance of the order \cite{lecture, 10.1093/oso/9780199592357.001.0001, timm2016lattice})
 All possible operators are listed below:
 \begin{enumerate}
+    \item communication - only in parallelized versions
     \item collision - handles colliding particles in the simulation
     \item sliding - applies a steady velocity to on side
     \item bounce back - bounces particles back into from certain walls

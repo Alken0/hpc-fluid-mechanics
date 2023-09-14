@@ -316,13 +316,17 @@ def stream_field_sliding_lit(state: np.ndarray, step: int, path: Optional[str] =
     plt.streamplot(x, y, u, v)
 
     # plot boundaries
-    y = range(state.shape[1])
-    upper_boundary = np.ones(state.shape[1]) * state.shape[2] - 0.5
-    plt.plot((-0.5, state.shape[1]), (state.shape[2] - 0.5, state.shape[2] - 0.5), color='orange',
-             label='static boundary')
-    lower_boundary = np.ones(state.shape[1]) * -0.5
+    y = np.array(range(state.shape[1] + 2)) - 0.5
+    upper_boundary = np.ones(state.shape[1] + 2) * state.shape[2] - 0.5
+    plt.vlines(x=-0.5, ymin=-0.5, ymax=state.shape[2] + 0.5, color='orange',
+               label='static boundary')
+    plt.vlines(x=state.shape[1] + 0.5, ymin=-0.5, ymax=state.shape[2] + 0.5, color='orange')
+    lower_boundary = np.ones(state.shape[1] + 2) * -0.5
     plt.plot(y, lower_boundary, color='orange')
     plt.plot(y, upper_boundary, label="sliding lit", color='green')
+
+    plt.legend()
+    plt.tight_layout()
 
     if path is None:
         plt.show()

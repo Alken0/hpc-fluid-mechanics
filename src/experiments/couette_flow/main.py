@@ -8,6 +8,12 @@ from src.shared.util import States, Parameters
 
 
 def init(x_dim: int, y_dim: int, u_sliding: float) -> Tuple[np.array, np.array]:
+    """
+    :param x_dim: L_x
+    :param y_dim: L_y
+    :param u_sliding: velocity of sliding top
+    :return: initial condition for the couette flow
+    """
     rho = np.ones(shape=(x_dim, y_dim))
     u = np.zeros(shape=(2, x_dim, y_dim))
     F = boltzmann.equilibrium(rho, u)
@@ -22,16 +28,13 @@ def run_couette_flow(params: Parameters) -> States:
     F, sliding_u = init(params.x_dim, params.y_dim, params.sliding_u)
 
     states = States()
-    # plotter = plot.Plotter(continuous=True, timeout=0.001, vmax=1, vmin=0)
     for i in tqdm(range(params.iterations)):
         boltzmann.collision(F, omega=params.omega)
         boltzmann.slide_top(F, params.sliding_rho, sliding_u)
         F_star = np.copy(F)
         boltzmann.stream(F)
         boltzmann.bounce_back(F, F_star, bot=True)
-
         states.add(F)
-        # plotter.velocity(F, step=i)
     return states
 
 

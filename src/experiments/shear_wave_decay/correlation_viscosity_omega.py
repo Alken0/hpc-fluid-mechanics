@@ -10,7 +10,7 @@ from src.shared.util import Parameters, Point
 def calculate_correlation(params: Parameters, point: Point) -> Tuple[List[float], List[float]]:
     omegas = []
     viscosities = []
-    steps = np.arange(params.omega_min, params.omega_max, params.omega_step)
+    steps = np.arange(params.omega_min, params.omega_max, params.omega_step)  # create iterable with omegas
     for i, omega in enumerate(steps):
         print(f"currently at {i}/{steps.shape[0]}")
         params.omega = omega

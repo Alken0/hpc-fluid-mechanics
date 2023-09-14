@@ -1,1 +1,28 @@
 \chapter{Conclusion}\label{ch:conclusion}
+In this project several experiments were successfully run.
+This includes the \textit{Shear Wave Decay} with 2 different initial conditions.
+In addition, the correlation between viscosity and $\omega$ was measured.
+
+Furthermore, the \textit{Couette Flow} and \textit{Poiseulle Flow} were run.
+Both experiments showcased, how fluid behaves with different outer boundaries.
+While the \textit{Couette Flow} showed the behavior of a sliding lit with static ground in \cref{sec:couette-flow}, the \textit{Poiseulle Flow} introduces pressure to bring movement into a fluid in a pipe in \cref{sec:poiseuille-flow}.
+Both experiments showed especially the effects of friction to the movement of the fluid.
+
+Finall the \textit{Sliding Lit} experiment combined elements of the previous experiments to simulate a fluid in a box with a sliding lit.
+The project was further parallelized as shown in \cref{sec:parallelization}.
+The parallelization showed a decreasing effectiveness with the number of processes in \cref{sec:sliding-lit}, which is explainable by the communication overhead.
+\newline
+
+Overall the experiments were quite successfull, there were only minor problems.
+One of them was the datatype of the probability density function.
+The type was in the beginning only float32, which led to unstable behavior in later steps in the experiment.
+\newline
+
+The project in general is written in a very extensable manner with a focus on clean code.
+Therefore it could be extended in the future.
+Another experiment, that could be conducted, would be the introduction of an obstacle in the center of the simulation.
+This leads to different streams around the obstacle, depending on its shape.
+
+
+- tODOs
+- CHATGPT erwähene!

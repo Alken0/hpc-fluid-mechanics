@@ -8,6 +8,7 @@ from src.shared.util import States, Parameters, Saver
 
 
 def init(x_dim: int, y_dim: int, u_sliding: float) -> Tuple[np.array, np.array]:
+    """initial condition for sliding_lit, also used in the parallel version"""
     rho = np.ones(shape=(x_dim, y_dim), dtype=np.float64)
     u = np.zeros(shape=(2, x_dim, y_dim), dtype=np.float64)
     F = boltzmann.equilibrium(rho, u)
@@ -33,9 +34,9 @@ def main(params: Parameters) -> States:
 if __name__ == '__main__':
     params = Parameters(
         path="data/sliding_lit",
-        x_dim=324,
-        y_dim=324,
-        iterations=20000,
+        x_dim=302,
+        y_dim=302,
+        iterations=100000,
         omega=1,
         sliding_u=0.1,
         sliding_rho=1,

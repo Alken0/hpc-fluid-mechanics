@@ -6,6 +6,11 @@ from src.shared.util import Parameters, States
 
 
 def init(x_dim, y_dim) -> np.array:
+    """
+    :param x_dim: L_x
+    :param y_dim: L_y
+    :return: initial condition for the poiseuille flow
+    """
     rho = np.ones(shape=(x_dim, y_dim))
     u = np.zeros(shape=(2, x_dim, y_dim))
     return boltzmann.equilibrium(rho, u)
@@ -49,8 +54,6 @@ if __name__ == '__main__':
         iterations=2000
     )
     states = run_poiseuille_flow(params)
-    # Saver.save(params.path, states, params)
-    # states, path = Saver.load(params.path)
 
     for step in [10, 999]:
         plot.velocity_for_step_at_columns(states, columns=[1, 5], step=step, path=params.path)

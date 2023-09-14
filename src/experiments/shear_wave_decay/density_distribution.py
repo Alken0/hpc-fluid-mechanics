@@ -49,15 +49,11 @@ if __name__ == '__main__':
         omega=1.0,
         iterations=1000
     )
-    # states = run_density(params)
-    states, params = Saver.load(params.path)
+    states = run_density(params)
 
-    # Saver.save(params.path, states, params)
-
-    # plot.density_heatmap(states, step=0)
     plot.density_aggregate_over_time(states, path=params.path)
     plot.velocity_aggregate_over_time(states, path=params.path)
 
-    plot.stream_field(states, step=41, scale=0.06, path=params.path)
-    plot.stream_field(states, step=85, scale=0.06, path=params.path)
-    plot.stream_field(states, step=127, scale=0.06, path=params.path)
+    plot.stream_field(states, step=41, path=params.path)
+    plot.stream_field(states, step=85, path=params.path)
+    plot.stream_field(states, step=127, path=params.path)

@@ -3,7 +3,7 @@ This chapter contains all experiments and their results.
 The report to each experiment contains an explanation of the setup, explained plots and information to reproduce the experiment.
 
 
-\section{Shear Wave Decay}
+\section{Shear Wave Decay}\label{sec:shear-wave-decay}
 The Shear Wave Decay is a common concept in computational physics to measure the kinematic viscosity of a fluid.
 It is set up by creating an initial sinusoidal velocity profile and measuring the decay rate.
 The field is set up with a periodic boundary condition on each side, which results in e.g.\ particles moving out of the right to appear back on the left side.
@@ -31,17 +31,17 @@ The default parameters of the Shear Wave Decay experiments are shown in \cref{ta
 The initial condition is a given by the following equation where $L_x$ resembles the size in x-direction
 
 \begin{equation*}
-    \begin{aligned}
-        \mathbf{u}(\mathbf{r},0) &= 0 \\
-        \rho(\mathbf{r},0) &= \rho_0 + \epsilon \sin \left( \frac{2 \pi x}{L_x} \right) \cdot
-    \end{aligned}
+    \begin{gathered}
+        \mathbf{u}(\mathbf{r},0) = 0 \\
+        \rho(\mathbf{r},0) = \rho_0 + \epsilon \sin \left( \frac{2 \pi x}{L_x} \right) \cdot
+    \end{gathered}
 \end{equation*}
 
 Because of the initialization the fluid is shaped like a sinusoid wave without any velocity.
 It is expected that this wave collapses in itself.
 This is due to the fact that the system tries to reach a state of equilibrium where the mass at each position is the same.
 Therefore, a flow is created from the higher density area to the lower density area.
-This flow continues until the mass at the previous lower density area is so dense, that no further flow is created. %TODO better explaining why it overflows!
+This flow continues until the mass at the previous lower density area is so dense, that no further flow is created.
 It now reached a state similar to the beginning however the dense and low-dense areas swapped which is why the flow will have opposite directions in the next iteration.
 This process can be seen in \cref{fig:swd-stream-velocity}.
 
@@ -84,10 +84,10 @@ The decay is shown through the plots in \cref{fig:swd-decay}.
 \textbf{This experiment ran with an epsilon of 0.5 to display the effect more drastically.}
 The initial condition is a given by the following equation where $L_y$ resembles the size in y-direction and $\epsilon$ resembles the initial amplitude
 \begin{equation*}
-    \begin{aligned}
-        u_x(\mathbf{r},0) &= \epsilon \sin \left( \frac{2 \pi x}{L_y} \right) \\
-        \rho(\mathbf{r},0) &= 1 \cdot
-    \end{aligned}
+    \begin{gathered}
+        u_x(\mathbf{r},0) = \epsilon \sin \left( \frac{2 \pi x}{L_y} \right) \\
+        \rho(\mathbf{r},0) = 1 \cdot
+    \end{gathered}
 \end{equation*}
 
 Because of the initial condition, the flow varies throughout the field and flows in opposite directions.
@@ -141,7 +141,12 @@ The decay rate is also in line with the theoretical solution (as seen in \cref{f
 This experiment aims to measure the correlation between the kinematic viscosity and the parameter omega, that is used for the collision.
 The kinematic viscosity describes, how \textit{thick} some fluid is, e.g.\ syrup has a higher viscosity than water. % https://en.wikipedia.org/wiki/Viscosity
 This experiment measures the viscosity by running the previous experiment \cref{subsec:sinusoidal-velocity} multiple times with different omegas.
-It is expected that a lower omega has a higher viscosity. % TODO why?
+It is expected that a lower omega results in a higher viscosity, because they are directly correlated \cite{lecture} by
+\begin{equation*}
+    \begin{aligned}
+        \nu = C^2_S * \frac{\Delta t}{ \omega - \frac{\Delta t}{2}} \cdot
+    \end{aligned}
+\end{equation*}
 The results of the experiment are shown in \cref{fig:swd-vo-viscosity-vs-omega}.
 
 \begin{figure}[H]
@@ -153,7 +158,7 @@ The results of the experiment are shown in \cref{fig:swd-vo-viscosity-vs-omega}.
 \end{figure}
 
 Strangely, for very small omega, the viscosity does not follow the otherwise exponential decay.
-This is due to the model of the simulation, that fails to replicate the exact behaviour with too large or small values. % TODO why?
+This is due to the model of the simulation, that fails to replicate the exact behavior with too large or small $\omega$s. % TODO why?
 In theory, this may even have an impact on the experiments, but omega was set to 1.0 to not have a negative impact of this phenomenon.
 
 
@@ -163,10 +168,10 @@ Notably, the lower boundary remains stationary, while the upper boundary is slid
 Periodic boundary conditions are enforced along the right and left sides.
 The initial condition can be mathematically expressed as follows:
 \begin{equation*}
-    \begin{aligned}
+    \begin{gathered}
         \rho(0) = 0 \\
         \mathbf{u}(0) = 0 \cdot
-    \end{aligned}
+    \end{gathered}
 \end{equation*}
 
 Because of the friction of the boundaries, the fluid starts flow.
@@ -212,15 +217,15 @@ To reproduce this experiment, please use the parameters from \cref{tab:cf-parame
 \end{table}
 
 
-\section{Poiseuille Flow}
+\section{Poiseuille Flow}\label{sec:poiseuille-flow}
 The \textit{Poiseuille Flow} can be described as a pressure pipe.
 There are stationary boundaries at the top and bottom and a periodic boundary condition to the sides, as seen in \cref{fig:pf-velocity-field}.
 In the beginning all velocity is set to 0 as defined by the initial condition
 \begin{equation*}
-    \begin{aligned}
-        \rho(0) &= 1.0 \\
-        \mathbf{u}(0) &= 0 \cdot
-    \end{aligned}
+    \begin{gathered}
+        \rho(0) = 1.0 \\
+        \mathbf{u}(0) = 0 \cdot
+    \end{gathered}
 \end{equation*}
 
 Because of the pressure, a flow starts from one side to the other and maxes out at a certain speed given by the pressure.
@@ -307,10 +312,10 @@ This means, there are stationary boundaries to the left, right and bottom.
 The upper boundary is similar to the \cref{sec:couette-flow} and sliding in x-direction.
 The experiment starts with a motionless field, described by the initial condition
 \begin{equation*}
-    \begin{aligned}
-        \rho(0) &= 1.0 \\
-        \mathbf{u}(0) &= 0 \cdot
-    \end{aligned}
+    \begin{gathered}
+        \rho(0) = 1.0 \\
+        \mathbf{u}(0) = 0 \cdot
+    \end{gathered}
 \end{equation*}
 
 \begin{figure}[H]
@@ -318,10 +323,16 @@ The experiment starts with a motionless field, described by the initial conditio
         \includegraphics[width=\linewidth]{graphs/SlidingLit/stream_field_1000}
     \end{minipage}% don't remove this comment - uncomments a new line
     \begin{minipage}{0.5\textwidth}
-        \includegraphics[width=\linewidth]{graphs/SlidingLit/stream_field_20000}
+        \includegraphics[width=\linewidth]{graphs/SlidingLit/stream_field_10000}
+    \end{minipage}
+    \begin{minipage}{0.5\textwidth}
+        \includegraphics[width=\linewidth]{graphs/SlidingLit/stream_field_60000}
+    \end{minipage}% don't remove this comment - uncomments a new line
+    \begin{minipage}{0.5\textwidth}
+        \includegraphics[width=\linewidth]{graphs/SlidingLit/stream_field_90000}
     \end{minipage}
     \caption{
-        The stream field of the sliding lit at different timesteps.
+        The stream field of the sliding lit at different timesteps. Reynolds Numbers in order: 25, 50, 125, 150. The Reynolds Number is explained in \cref{sec:reynolds-number}.
     }
     \label{fig:sl-stream-field}
 \end{figure}
@@ -358,3 +369,70 @@ The unit MLUPS is calculated by
         \label{fig:sl-mlups}
     \end{center}
 \end{figure}
+
+\Cref{fig:sl-mlups} shows that an increased number of processes reduces the total runtime of the simulation.
+That means that more computations happen in a certain timeframe, which is why the MLUPS is going higher.
+It can also be seen that this trend will decrease with too many processes.
+That means, going from 10 to 50 processes is more effective than from 50 to 100 or even 100 to 150.
+This phenomenon can be explained by looking at the communication overhead at each step, to sync the calculation results between processes.
+While this is relativly low for a few processes (they take a long time to calculate the result), it gets relatively big when looking at many processes, that don't tkae much time for the calculation.
+\newline
+
+To repeat the experiment, please use the parameters as shown in \cref{tab:sl-parameters}.
+\begin{table}[H]
+    \centering % used for centering table
+    \begin{tabular}{c c}
+% centered columns (4 columns)
+        \hline\hline %inserts double horizontal lines
+        Parameter           & Value \\ [0.5ex] % inserts table heading
+        \hline % inserts single horizontal line
+        $L_x$               & 302               \\
+        $L_y$               & 302               \\
+        $\omega$            & 1.0               \\
+        $\epsilon$          & 0.01              \\
+        sliding u           & 0.1               \\
+        sliding rho         & 1                 \\
+        $t_{\max}$          & 100000            \\
+        number of processes & [10, 49, 81, 100]  \\[1ex] % [1ex] adds vertical space
+        \hline %inserts single line
+    \end{tabular}
+    \caption{Parameters of the Sliding Lit} % title of Table
+    \label{tab:sl-parameters}
+\end{table}
+
+Another experiment with different parameters was conducted to get a higher Reynolds Number.
+The parameters and results are shown in the following plots and table.
+
+
+
+\begin{figure}[H]
+    \begin{center}
+        \begin{minipage}{0.5\textwidth}
+            \includegraphics[width=\linewidth]{graphs/SlidingLit/stream_field_20000_rn}
+        \end{minipage}% don't remove this comment - uncomments a new line
+        \begin{minipage}{0.5\textwidth}
+            \includegraphics[width=\linewidth]{graphs/SlidingLit/stream_field_25000_rn}
+        \end{minipage}        \caption{Sliding Lit results with a Reynolds Number of 980 and 1070.}
+        \label{fig:sl-mlups}
+    \end{center}
+\end{figure}
+
+\begin{table}[H]
+    \centering % used for centering table
+    \begin{tabular}{c c}
+% centered columns (4 columns)
+        \hline\hline %inserts double horizontal lines
+        Parameter   & Value \\ [0.5ex] % inserts table heading
+        \hline % inserts single horizontal line
+        $L_x$       & 302    \\
+        $L_y$       & 302    \\
+        $\omega$    & 1.7    \\
+        $\epsilon$  & 0.01   \\
+        sliding u   & 0.2    \\
+        sliding rho & 1      \\
+        $t_{\max}$  & 100000            \\[1ex] % [1ex] adds vertical space
+        \hline %inserts single line
+    \end{tabular}
+    \caption{Parameters of the Sliding Lit} % title of Table
+    \label{tab:sl-parameters}
+\end{table}
