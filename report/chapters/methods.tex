@@ -68,7 +68,7 @@ The included equilibirum function can be denoted as
 
 The equilibrium function introduces some additional quantities, namely the density \(\rho(\mathbf{r})\), velocity \(\mathbf{u}(\mathbf{r})\) and \(w_i\).
 \(w_i\) is defined for a D2Q9 lattice as seen in~\cref{eq:w}.
-The other two quantities can be calculated using the following formulas
+The other two quantities can be computed utilizing \cref{eq:rho} and \cref{eq:u}, respectively.
 \begin{equation}
     w_i = \left(\dfrac{4}{9},
     \dfrac{1}{9}, \dfrac{1}{9}, \dfrac{1}{9}, \dfrac{1}{9},
@@ -81,7 +81,7 @@ The other two quantities can be calculated using the following formulas
 \end{equation}
 \begin{equation}
     \mathbf{u}(\mathbf{r})=
-    \frac{1}{\rho(\mathbf{r})}\sum_i \mathbf{c}_i f_i(\mathbf{r}) \cdot
+    \frac{1}{\rho(\mathbf{r})}\sum_i \mathbf{c}_i f_i(\mathbf{r})
     \label{eq:u}
 \end{equation}
 
@@ -106,19 +106,19 @@ The grid represents the position space as coordinates of the x and y coordinates
 
 Each position holds a probability density value, resembled by the value at that point.
 The velocities are included when introducing a third dimension, that separates the different streaming directions.
-To get the probability density function back, only the sum of all different directions in one point is needed.
 The probability density function can be reconstructed by simply summing the values for all different directions at a given point.
 \newline
 
 The streaming, as explained in \cref{subsec:streaming}, is applied by moving the values of the points in one of 9 directions in their respective dimension.
 The collision process can be implemented by employing the functions described in \cref{subsec:collision}.
-During collisions, densities may be transferred between different dimensions within the scheme.
+During collisions, densities may be transferred between different dimensions within the scheme and therefore change directions and momentum.
+\pagebreak
 
 
 \section{Reynolds Number}\label{sec:reynolds-number}
 The Reynolds Number is used to compare results of different simulations.
-The same Reynolds Number indicates, that the simulations are comparable.
-It is calculated by the following formula where $L$ is the size of one simulation dimension, $u$ the velocity or speed and $\nu$ the viscosity of the simulated fluid
+The same Reynolds Number of different setups indicates that the simulations are comparable.
+The Reynolds Number is calculated by the following formula where $L$ is the size of one simulation dimension, $u$ the velocity or speed and $\nu$ the viscosity of the simulated fluid
 
 \begin{equation*}
     \begin{gathered}

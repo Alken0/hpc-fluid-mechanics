@@ -3,6 +3,8 @@
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
 \usepackage{lmodern}
+\usepackage{xcolor}
+\usepackage{tcolorbox}
 \usepackage{hyperref}
 \usepackage[english]{babel}
 \usepackage{graphicx}
@@ -29,6 +31,24 @@
 \author{\textsc{Jonas Bürgel} \\ \vspace{3mm}\text{5500163}  \\
 \vspace{3mm}\text{buergelj@tf.uni-freiburg.de}}
 
+\newtcolorbox{fancyquotes}{%
+    enhanced jigsaw,
+    breakable,      % allow page breaks
+    frame hidden,   % hide the default frame
+    left=0cm,       % left margin
+    right=0cm,      % right margin
+    opacityback=0,
+    overlay={%
+        \node [scale=8,
+            text=black,
+            inner sep=0pt,] at ([xshift=-1cm,yshift=-1cm]frame.north west){``};
+        \node [scale=8,
+            text=black,
+            inner sep=0pt,] at ([xshift=1cm]frame.south east){''};
+    },
+% paragraph skips obeyed within tcolorbox
+    parbox=false,
+}
 
 \begin{document}
 

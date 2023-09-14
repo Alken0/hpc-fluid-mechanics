@@ -81,7 +81,7 @@ The decay is shown through the plots in \cref{fig:swd-decay}.
 \end{center}
 
 \subsection{Sinusoidal Velocity}\label{subsec:sinusoidal-velocity}
-\textbf{This experiment ran with an epsilon of 0.5 to display the effect more drastically.}
+\textbf{This experiment ran with an epsilon of 0.5 to improve visibility of the effect.}
 The initial condition is a given by the following equation where $L_y$ resembles the size in y-direction and $\epsilon$ resembles the initial amplitude
 \begin{equation*}
     \begin{gathered}
@@ -114,10 +114,10 @@ Therefore, it is expected that the flow will decrease over time and get thinner.
 \Cref{fig:swd-vs-velocity-fields} gives a brief overview over the initial flow, and it's decaying over time.
 While at step 0, a strong sinusoid flow can be seen, at timestep 999 it decreased visibly.
 This decrease can be even further shown in \cref{fig:swd-vs-at-column_x} which shows the decay at a specific column.
-The decay rate is also in line with the theoretical solution (as seen in \cref{fig:swd-vs-ideal}) given by
+The decay rate is also in line with the theoretical solution \cite{lecture} (as seen in \cref{fig:swd-vs-ideal}) given by
 \begin{equation*}
     \begin{aligned}
-        a_t &= a_0 e^{-vt \frac{2\pi}{L_y}^2}
+        a_t &= a_0 e^{-vt \frac{2\pi}{L_y}^2} \cdot
     \end{aligned}
 \end{equation*}
 
@@ -130,7 +130,7 @@ The decay rate is also in line with the theoretical solution (as seen in \cref{f
         \end{minipage}% don't remove this comment - uncomments a new line
         \begin{minipage}{0.5\textwidth}
             \includegraphics[width=\linewidth]{graphs/ShearWaveDecay/VelocityDistribution/velocity_against_ideal}
-            \caption{measured vs ideal decay}
+            \caption{Decaying measured vs ideal velocity.}
             \label{fig:swd-vs-ideal}
         \end{minipage}
     \end{figure}
@@ -158,7 +158,7 @@ The results of the experiment are shown in \cref{fig:swd-vo-viscosity-vs-omega}.
 \end{figure}
 
 Strangely, for very small omega, the viscosity does not follow the otherwise exponential decay.
-This is due to the model of the simulation, that fails to replicate the exact behavior with too large or small $\omega$s. % TODO why?
+This is due to the model of the simulation that fails to replicate the exact behavior with too large or small omegas. % TODO why?
 In theory, this may even have an impact on the experiments, but omega was set to 1.0 to not have a negative impact of this phenomenon.
 
 
@@ -174,10 +174,10 @@ The initial condition can be mathematically expressed as follows:
     \end{gathered}
 \end{equation*}
 
-Because of the friction of the boundaries, the fluid starts flow.
+Because of the friction of the boundaries, the fluid starts to flow.
 More specifically, the fluid in the top starts to get momentum, because it is close to the upper boundary which is moving.
 This flow then spreads further down.
-But because the wall at the bottom is steady, the flow gets less the further it deepens.
+But because the wall at the bottom is steady, the flow gets linearly less the further it deepens.
 This process can be seen in the following two graphs in \cref{fig:cf-velocity-field-over-time}.
 
 
@@ -262,7 +262,7 @@ The lines to the right would completely overlap and show no difference anymore, 
 
 Throughout the pipe however, the equilibrium state is not yet reached and will need further time as shown in the right graph.
 It shows that the velocity in the middle of the pipe will still increase after 2000 steps before reaching its final state given by the analytical solution.
-\newline
+\pagebreak
 
 Looking at \cref{fig:pf-velocity-areas}, a final \textit{hill} shaping velocity emerges throughout the field.
 The \textit{hill} shape can be explained by looking at the pipe which has two solid borders to the sides.
@@ -307,7 +307,7 @@ Use $L_x = 10$ and $L_y = 10$ to generate a more readable velocity field.
 
 
 \section{Sliding Lit}\label{sec:sliding-lit}
-A good analogy for the \textit{Sliding Lit} environment is a box with an infinite lit, constantly sliding to the right.
+A good analogy for the \textit{Sliding Lit} environment is a box with an infinite lit, constantly sliding to the left.
 This means, there are stationary boundaries to the left, right and bottom.
 The upper boundary is similar to the \cref{sec:couette-flow} and sliding in x-direction.
 The experiment starts with a motionless field, described by the initial condition
@@ -340,6 +340,7 @@ The experiment starts with a motionless field, described by the initial conditio
 In the experiment, the emergence of a circular flow pattern is observed as seen in \cref{fig:sl-stream-field}.
 This pattern is instigated by maintaining a constant velocity at the upper boundary, causing the velocity to propagate throughout the entire fluid.
 Due to the confinement of the fluid within a container, distinct vertical flow patterns emerge at the sides.
+\pagebreak
 
 Specifically, there is an upward flow, ascending to replace fluid that has been displaced further by the initial flow.
 Simultaneously, a downward flow occurs as fluid descends from the upper portion of the container to lower regions.
@@ -375,7 +376,7 @@ That means that more computations happen in a certain timeframe, which is why th
 It can also be seen that this trend will decrease with too many processes.
 That means, going from 10 to 50 processes is more effective than from 50 to 100 or even 100 to 150.
 This phenomenon can be explained by looking at the communication overhead at each step, to sync the calculation results between processes.
-While this is relativly low for a few processes (they take a long time to calculate the result), it gets relatively big when looking at many processes, that don't tkae much time for the calculation.
+While this is relativly low for a few processes (they take a long time to calculate the result), it gets relatively big when looking at many processes, that don't take much time for the calculation.
 \newline
 
 To repeat the experiment, please use the parameters as shown in \cref{tab:sl-parameters}.

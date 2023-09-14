@@ -1,6 +1,7 @@
 \chapter{Implementation}\label{ch:implementation}
 The goal of this chapter is to provide a guide on how to reproduce the experiments.
-This includes a tutorial on how to get the project running but also a brief high-level overview of the code to facilitate easy retrieval of requested information.
+This includes a tutorial on how to get the project running but also a brief high-level overview of the code.
+The overview aims to facilitate easy retrieval of requested information regarding the code.
 
 
 \section{Setup}
@@ -49,9 +50,10 @@ The indices of the channels are in line with the indices of the arrows in the gr
 \section{Main Routine}\label{sec:main-routine}
 The main routine may be seen as a function that is repeated until the experiment is over.
 It consists of several operators that stay the same in each experiment.
-For some experiments, not all operators are used or for example the \textit{bounce-back} is only applied to certain walls.
+For some experiments, not all operators are used.
+For example, the \textit{bounce-back} is skipped in the \textit{Shear Wave Decay}.
 \textbf{The order of the operators always stays the same and is crucial for a successive experiment}.
-(Even if there are some exceptions of the importance of the order \cite{lecture, 10.1093/oso/9780199592357.001.0001, timm2016lattice})
+(Even if there are some exceptions to the importance of the order \cite{lecture, 10.1093/oso/9780199592357.001.0001, timm2016lattice}.)
 All possible operators are listed below:
 \begin{enumerate}
     \item communication - only in parallelized versions
@@ -70,7 +72,7 @@ However, it is to mention that all examples follow strictly the formulas explain
 The last experiment \cref{sec:sliding-lit} utilizes the \textit{mpi4py} package to parallelize its run.
 The MPI interface allows spreading the array of the probability density function over several processes.
 Each process then determines the result one iteration of the main routine (described in \cref{sec:main-routine}) for its subarray.
-Afterward, the results are combined by shifting the boundaries of each subarray, as shown in the following example.
+Afterward, the results are combined by shifting the boundaries of each subarray, as explained by the following example.
 \newline
 
 A right shift for process 4 works as following, if assuming that there are the processes 3, 4 and 5.
